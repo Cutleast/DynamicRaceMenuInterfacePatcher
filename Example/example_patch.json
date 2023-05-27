@@ -2,18 +2,40 @@
 // if you are a mod author and want to create a RaceMenu Patch.
 
 {
-    "shapes": {
-        "1": "",
-        "2": "",
-        "3": "",
-        "4": "",
-        "5": ""
-    },
-    // Use shape number to define the shape you want to replace
-    // Use the file name to define your replacement file.
+    {
+    "shapes": [
+                {
+                    "index":[1],
+                    "NewFile": "/NewFile.svg"
+                },
+                {
+                    "index":[2,3],
+                    "NewFile": "/NewFile.svg"
+                },
+                {
+                    "index":[4],
+                    "NewFile": "/NewFile.svg"
+                }
 
-    "text": {
-        "textedits": [
+        ],
+        "shapes": [
+            {
+                "index":[1],
+                "NewFile": "/NewFile.svg"
+            },
+            {
+                "index":[2,3],
+                "NewFile": "/NewFile.svg"
+            },
+            {
+                "index":[4],
+                "NewFile": "/NewFile.svg"
+            }
+
+    ]
+    },
+    {
+    "text": [
             {
                 "index": [3, 5, 7],
                 "font": 54,

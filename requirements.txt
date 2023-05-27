@@ -1,5 +1,5 @@
+jstyleson
 qtpy
 PySide6
-pyswf
 bethesda-structs
-pylzma
+nuitka

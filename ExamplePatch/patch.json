@@ -1,0 +1,36 @@
+// It is highly recommended to read the documentation,
+// if you are a mod author and want to create a RaceMenu Patch.
+
+{
+    // Use shape number to define the shape you want to replace
+    // Use the file name to define your replacement file.
+    "shapes": [
+        {
+            "index": [1, 2, 3],
+            "file_name": "newfile.svg"
+        },
+        {
+            "index": [4, 5, 6],
+            "file_name": "newfile.svg"
+        }
+    ],
+
+    "text": [
+        {
+            "index": [3, 5, 7],
+            "font": 54,
+            "useoutlines": 0,
+            // Use the first 4 digits to define the color
+            // The last two define the transparency.
+            // If you don't want any transparency at all,
+            // just leave them 'ff'.
+            "color": "ffffffff"
+        },
+        {
+            "index": [4, 8, 9],
+            "font": 45,
+            "useoutlines": 1,
+            "color": "000000ff"
+        }
+    ]
+}

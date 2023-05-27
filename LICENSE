@@ -1,12 +1,10 @@
 Attribution-NonCommercial-NoDerivatives 4.0 International
 
 Copyright (c) 2023 Cutleast
-
-All files included in this repository are under the specified license. 
-Excluded from this are those from the /src/assets/ffdec folder. These
-have their own respective license, which can be found in the given
-folder.
-
+Almost all files in this repository are under the license described
+below. The only exceptions are those from JPEXS. These are licensed
+under the Copyright (c) 2007 Free Software Foundation and have their
+own respective license file in the folder /src/assets/ffdec.
 =======================================================================
 
 Creative Commons Corporation ("Creative Commons") is not a law firm and

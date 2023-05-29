@@ -23,8 +23,8 @@
     "text": [
             {
                 "index": [3, 5, 7],
-                "font": 54,
-                "useoutlines": 0,
+                "font": "54",
+                "useoutlines": "0",
                 "color": "ffffffff"
                 // Use the first 4 digits to define the color
                 // The last two define the transparency.
@@ -33,8 +33,8 @@
             },
             {
                 "index": [4, 8, 9],
-                "font": 45,
-                "useoutlines": 1,
+                "font": "45",
+                "useoutlines": "1",
                 "color": "000000ff"
             }
         ]
@@ -43,39 +43,39 @@
     // Text Edits 
     {
     "sprites":{
-                "SpriteID":"1",
-                "CharacterID":"20",
+                "SpriteID": "1",
+                "CharacterID": "20",
                 "MATRIX":
                  {
-                    "translateX":"100",
-                    "translateY":"-100",
-                    "scaleX":"1",
-                    "scaleY":"45",
-                    "rotateSkew0":"90",
-                    "rotateSkew1":"175",
-                    "hasScale":"true",
-                    "hasRotate":"true"
+                    "translateX": "100",
+                    "translateY": "-100",
+                    "scaleX": "1",
+                    "scaleY": "45",
+                    "rotateSkew0": "90",
+                    "rotateSkew1": "175",
+                    "hasScale": "true",
+                    "hasRotate": "true"
 
                  }
             },
             {
-                "SpriteID":"1",
-                "CharacterID":"21",
+                "SpriteID": "1",
+                "CharacterID": "21",
                 "MATRIX":[
                  {
-                    "translateX":"130",
-                    "translateY":"110",
-                    "scaleX":"4",
-                    "scaleY":"425",
+                    "translateX": "130",
+                    "translateY": "110",
+                    "scaleX": "4",
+                    "scaleY": "425",
                  }
                 ]
             },
             {
-                "SpriteID":"6",
-                "CharacterID":"21",
+                "SpriteID": "6",
+                "CharacterID": "21",
                 "MATRIX":[
                  {
-                    "scaleY":"25",
+                    "scaleY": "25",
                  }
                 ]
             }

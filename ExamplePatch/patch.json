@@ -4,15 +4,15 @@
 {
     "shapes": [
         {
-            "index":[1],
+            "index": [1],
             "NewFile": "shapes/shape1.svg"
         },
         {
-            "index":[2,3],
+            "index": [2,3],
             "NewFile": "shapes/shape2.svg"
         },
         {
-            "index":[4],
+            "index": [4],
             "NewFile": "shapes/shape3.svg"
         }
     ],
@@ -20,8 +20,8 @@
     "text": [
         {
             "index": [3, 5, 7],
-            "font": "54",
-            "useoutlines": "0",
+            "font": 54,
+            "useoutlines": 0,
             // Use the first 6 digits to define the color
             // The last two define the transparency.
             // If you don't want any transparency at all,
@@ -30,8 +30,8 @@
         },
         {
             "index": [4, 8, 9],
-            "font": "45",
-            "useoutlines": "1",
+            "font": 45,
+            "useoutlines": 1,
             "color": "000000ff"
         }
     ],
@@ -40,34 +40,34 @@
     // after Shape and Text Edits
     "sprites": [
         {
-            "SpriteID": "1",
-            "CharacterID": "20",
+            "SpriteID": 1,
+            "CharacterID": 20,
             "MATRIX": {
-                "translateX": "100",
-                "translateY": "-100",
-                "scaleX": "1",
-                "scaleY": "45",
-                "rotateSkew0": "90",
-                "rotateSkew1": "175",
-                "hasScale": "true",
-                "hasRotate": "true"
+                "translateX": 100,
+                "translateY": -100,
+                "scaleX": 1,
+                "scaleY": 45,
+                "rotateSkew0": 90,
+                "rotateSkew1": 175,
+                "hasScale": true,
+                "hasRotate": true
             }
         },
         {
-            "SpriteID": "1",
-            "CharacterID": "21",
+            "SpriteID": 1,
+            "CharacterID": 21,
             "MATRIX":  {
-                "translateX": "130",
-                "translateY": "110",
-                "scaleX": "4",
-                "scaleY": "425"
+                "translateX": 130,
+                "translateY": 110,
+                "scaleX": 4,
+                "scaleY": 425
             }
         },
         {
-            "SpriteID": "6",
-            "CharacterID": "21",
+            "SpriteID": 6,
+            "CharacterID": 21,
             "MATRIX": {
-                "scaleY": "25"
+                "scaleY": 25
             }
         }
     ]

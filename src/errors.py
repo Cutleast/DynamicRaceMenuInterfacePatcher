@@ -10,3 +10,8 @@ class InvalidPatchError(Exception):
     """
     For invalid patches (for eg. missing patch.json).
     """
+
+class BSANotFoundError(Exception):
+    """
+    For missing RaceMenu BSA.
+    """

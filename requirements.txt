@@ -2,4 +2,6 @@ jstyleson
 qtpy
 PySide6
 bethesda-structs
+xmltodict
+dicttoxml2
 nuitka

@@ -15,8 +15,8 @@ import qtpy.QtCore as qtc
 import qtpy.QtGui as qtg
 import qtpy.QtWidgets as qtw
 
-import utils
 import errors
+import utils
 
 
 class MainApp(qtw.QApplication):
@@ -27,6 +27,9 @@ class MainApp(qtw.QApplication):
     # Application properties
     name = "RaceMenu Interface Patcher"
     version = "1.0"
+
+    patcher_thread: utils.Thread = None
+    done_signal = qtc.Signal()
 
     def __init__(self):
         super().__init__()
@@ -47,11 +50,14 @@ class MainApp(qtw.QApplication):
         self.log.addHandler(self.log_str)
         self.log_level = 10 # Debug level
         self.log.setLevel(self.log_level)
+        self._excepthook = sys.excepthook
+        sys.excepthook = self.handle_exception
 
         self.root = qtw.QWidget()
         self.root.setWindowTitle(f"{self.name} v{self.version}")
         self.root.setStyleSheet((Path(".") / "assets" / "style.qss").read_text())
         self.root.setMinimumWidth(1000)
+        self.root.setMinimumHeight(500)
 
         self.layout = qtw.QVBoxLayout()
         self.root.setLayout(self.layout)
@@ -62,6 +68,7 @@ class MainApp(qtw.QApplication):
         racemenu_path_label = qtw.QLabel("Choose path to RaceMenu folder:")
         self.conf_layout.addWidget(racemenu_path_label, 0, 0)
         self.racemenu_path_entry = qtw.QLineEdit()
+        self.racemenu_path_entry.setText(self.scan_for_racemenu())
         self.conf_layout.addWidget(self.racemenu_path_entry, 0, 1)
         racemenu_path_button = qtw.QPushButton("Browse...")
 
@@ -83,6 +90,7 @@ class MainApp(qtw.QApplication):
         patch_path_label = qtw.QLabel("Choose path to RaceMenu patch folder:")
         self.conf_layout.addWidget(patch_path_label, 1, 0)
         self.patch_path_entry = qtw.QLineEdit()
+        self.patch_path_entry.setText(self.scan_for_patch())
         self.conf_layout.addWidget(self.patch_path_entry, 1, 1)
         patch_path_button = qtw.QPushButton("Browse...")
 
@@ -108,10 +116,10 @@ class MainApp(qtw.QApplication):
 
         self.patch_button = qtw.QPushButton("Patch!")
         self.patch_button.clicked.connect(self.run_patcher)
-        # self.patch_button.setDisabled(True)
         self.layout.addWidget(self.patch_button)
 
         self.std_handler.output_signal.connect(self.handle_stdout)
+        self.done_signal.connect(self.done)
 
         self.log.debug("Program started!")
 
@@ -120,10 +128,16 @@ class MainApp(qtw.QApplication):
     def __repr__(self):
         return "MainApp"
 
+    def handle_exception(self, exc_type, exc_value, exc_traceback):
+        self.log.critical(
+            "An uncaught exception occured:",
+            exc_info=(exc_type, exc_value, exc_traceback)
+        )
+
     def handle_stdout(self, text):
         self.protocol_widget.moveCursor(qtg.QTextCursor.MoveOperation.End)
         self.protocol_widget.insertPlainText(text)
-    
+
     def run_patcher(self):
         try:
             self.patcher = patcher.Patcher(
@@ -131,9 +145,53 @@ class MainApp(qtw.QApplication):
                 Path(self.patch_path_entry.text()).resolve(),
                 Path(self.racemenu_path_entry.text()).resolve()
             )
-            print(self.patcher.patch_data)
+            self.patcher_thread = utils.Thread(
+                self.patcher.patch,
+                "PatcherThread",
+                self
+            )
         except errors.InvalidPatchError:
             self.log.error("Selected patch is invalid!")
+            return
+
+        self.patch_button.setText("Cancel")
+        self.patch_button.clicked.disconnect(self.run_patcher)
+        self.patch_button.clicked.connect(self.cancel_patcher)
+
+        self.patcher_thread.start()
+
+    def done(self):
+        self.patch_button.setText("Patch!")
+        self.patch_button.clicked.disconnect(self.cancel_patcher)
+        self.patch_button.clicked.connect(self.run_patcher)
+
+    def cancel_patcher(self):
+        self.patcher_thread.terminate()
+
+        if self.patcher.ffdec_interface._pid is not None:
+            os.system(f"taskkill /F /PID {self.patcher.ffdec_interface._pid}")
+            self.patcher.ffdec_interface._pid = None
+
+        self.log.warning("Patch incomplete!")
+        self.done()
+
+    # WIP: Both methods below are not working
+    # Reason: unknown
+    def scan_for_racemenu(self):
+        parent_folder = Path(".").parent
+
+        for folder in parent_folder.glob("RaceMenu*\\RaceMenu.bsa"):
+            return str(folder.resolve())
+
+        return ""
+
+    def scan_for_patch(self):
+        parent_folder = Path(".").parent
+
+        for folder in parent_folder.glob("*\\patch.json"):
+            return str(folder.resolve())
+
+        return ""
 
 
 if __name__ == "__main__":

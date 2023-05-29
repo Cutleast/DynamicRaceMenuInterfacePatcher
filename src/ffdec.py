@@ -5,28 +5,16 @@ Contains FFDec (JPEXS Free Flash Decompiler) interface.
 Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
 """
 
-from dataclasses import dataclass
-import subprocess
-import os
 import logging
+import os
+import shutil
+import subprocess
 import sys
-from typing import List
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Dict, List
+
 from main import MainApp
-
-
-@dataclass
-class Job:
-    """
-    Job class for commandline interface.
-    """
-
-    name: str
-    cmd: str # commandline args
-    status: str = None # 'pending', 'running' or 'done'
-
-    def __repr__(self):
-        return self.name
 
 
 class FFDec:
@@ -36,7 +24,6 @@ class FFDec:
 
     _bin_path = Path(".") / "assets" / "ffdec" / "ffdec.bat"
     _swf_path = None
-    _queue: List[Job] = None
     _pid: int = None
 
     def __init__(self, swf_path: Path, app: MainApp):
@@ -47,45 +34,84 @@ class FFDec:
         self.log.setLevel(self.app.log.level)
 
         self._swf_path = swf_path
+    
+    def __repr__(self):
+        return "FFDecInterface"
 
-        self._queue = []
-
-    def run_job(self, job: Job):
-        _arg = job.cmd
-        _arg = _arg.replace("[SWF_FILE]", f'"{self._swf_path}"')
-
-        self.log.debug(f"Running job '{job.name}'...")
+    def _exec_command(self, args: str):
+        self.log.debug(f"Commandline: '{self._bin_path} {args}'")
 
         with subprocess.Popen(
-            args=_arg,
+            args=args,
             executable=self._bin_path,
             shell=True,
             stdin=subprocess.PIPE,
             stdout=sys.stdout,
             text=True,
             encoding="utf8",
-            errors="ignore") as process:
-            job.status = "running"
+            errors="ignore"
+        ) as process:
             self._pid = process.pid
+            for line in process.stdout:
+                self.log.info(f"[FFDec]: {line}")
         
-        job.status = "done"
         self._pid = None
 
-        self.log.debug("Job ran successfully!")
+    def _replace_shape(self, shape: Path, index: int):
+        self.log.debug(f"Replacing shape '{shape.stem}' at {index}...")
 
-    def run(self):
-        for job in self._queue:
-            self.run_job(job)
+        shape = shape.resolve()
+        args = f"""-replace "{self._swf_path}" "{self._swf_path}" {index} "{shape}" """
+        self._exec_command(args)
 
-    @staticmethod
-    def replace_job(file: Path, id: str, args: str = ""):
+        self.log.debug("Shape replaced.")
+    
+    def replace_shapes(self, shapes: Dict[Path, List[int]]):
         """
-        Creates replace job and returns it.        
+        Replaces shapes in SWF by <shapes>.
+
+        Params:
+            shapes: dictionary, keys are svg paths and values are list with indexes
         """
 
-        cmd = f"""-replace [SWF_FILE] [SWF_FILE] {id} "{file}" {args}"""
-        name = f"Replace_{id}"
-        job = Job(name, cmd)
+        self.log.info("Patching shapes...")
 
-        return job
+        for c, shape, indexes in enumerate(shapes.items()):
+            self.log.info(f"Patching shape {c+1} of {len(shapes)}...")
+            for index in indexes:
+                self._replace_shape(shape, index)
+
+        self.log.info("Shapes patched.")
+    
+    def swf2xml(self):
+        """
+        Converts SWF file to XML file and returns file path.
+        """
+
+        self.log.info("Converting SWF to XML...")
+
+        out_path = self._swf_path.with_suffix(".xml")
+
+        args = f"""-swf2xml "{self._swf_path}" "{out_path}" """
+        self._exec_command(args)
+
+        self.log.info("Converted to XML.")
+
+        return out_path
+    
+    def xml2swf(self, xml_file: Path):
+        """
+        Converts XML file to SWF file and returns file path.
+        """
+
+        self.log.info("Converting XML to SWF...")
+
+        out_path = xml_file.with_suffix(".swf")
+
+        args = f"""-xml2swf "{xml_file}" "{out_path}" """
+        self._exec_command(args)
+
+        self.log.info("Converted to SWF.")
+
+        return out_path
 

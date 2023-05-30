@@ -7,7 +7,6 @@ Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
 
 import logging
 import subprocess
-import sys
 from pathlib import Path
 from typing import Dict, List
 

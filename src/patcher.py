@@ -6,19 +6,17 @@ Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
 """
 
 
+import html
 import logging
 import os
 import re
-import html
 import shutil
 import tempfile as tmp
 import xml.etree.ElementTree as ET  # This is not the movie "E.T."!!!
 from pathlib import Path
 from typing import Dict, List
 
-import dicttoxml2 as d2xml
 import jstyleson as json
-import xmltodict as xml2d
 from bethesda_structs.archive.bsa import BSAArchive
 
 import errors

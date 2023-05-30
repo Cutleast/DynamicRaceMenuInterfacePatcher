@@ -19,7 +19,7 @@ class FFDec:
     Class for FFDec commandline interface.
     """
 
-    _bin_path = Path(".") / "assets" / "ffdec" / "ffdec.bat"
+    _bin_path = (Path(".") / "assets" / "ffdec" / "ffdec.bat").resolve()
     _swf_path = None
     _pid: int = None
 
@@ -36,14 +36,14 @@ class FFDec:
         return "FFDecInterface"
 
     def _exec_command(self, args: str):
-        self.log.debug(f"Commandline: '{self._bin_path} {args}'")
+        _cmd = f""""{self._bin_path}" {args}"""
+        # self.log.debug(f"""Commandline: '{_cmd}'""")
 
         with subprocess.Popen(
-            args=args,
-            executable=self._bin_path,
+            _cmd,
             shell=True,
             stdin=subprocess.PIPE,
-            stdout=sys.stdout,
+            stdout=subprocess.PIPE,
             text=True,
             encoding="utf8",
             errors="ignore"
@@ -73,7 +73,7 @@ class FFDec:
 
         self.log.info("Patching shapes...")
 
-        for c, shape, indexes in enumerate(shapes.items()):
+        for c, (shape, indexes) in enumerate(shapes.items()):
             self.log.info(f"Patching shape {c+1} of {len(shapes)}...")
             for index in indexes:
                 self._replace_shape(shape, index)

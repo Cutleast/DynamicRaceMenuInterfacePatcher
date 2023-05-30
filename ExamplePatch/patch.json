@@ -4,16 +4,16 @@
 {
     "shapes": [
         {
-            "index": [1],
-            "filePath": "shapes/shape1.svg"
+            "index": [146],
+            "filePath": "shapes/146.svg"
         },
         {
-            "index": [2, 3],
-            "filePath": "shapes/shape2.svg"
+            "index": [188],
+            "filePath": "shapes/188.svg"
         },
         {
-            "index": [4],
-            "filePath": "shapes/shape3.svg"
+            "index": [93],
+            "filePath": "shapes/93.svg"
         }
     ],
 
@@ -26,7 +26,7 @@
             // The last two define the transparency.
             // If you don't want any transparency at all,
             // just leave them 'ff'.
-            "color": "ffffffff"
+            "color": "12345678"
         },
         {
             "indexes": [4, 8, 9],

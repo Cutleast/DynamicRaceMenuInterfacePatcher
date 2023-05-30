@@ -9,6 +9,7 @@ Qt Version: 6.5.1
 import logging
 import os
 import sys
+import time
 from pathlib import Path
 
 import qtpy.QtCore as qtc
@@ -30,6 +31,7 @@ class MainApp(qtw.QApplication):
 
     patcher_thread: utils.Thread = None
     done_signal = qtc.Signal()
+    start_time: int = None
 
     def __init__(self):
         super().__init__()
@@ -135,8 +137,8 @@ class MainApp(qtw.QApplication):
         )
 
     def handle_stdout(self, text):
-        self.protocol_widget.moveCursor(qtg.QTextCursor.MoveOperation.End)
         self.protocol_widget.insertPlainText(text)
+        self.protocol_widget.moveCursor(qtg.QTextCursor.MoveOperation.End)
 
     def run_patcher(self):
         try:
@@ -158,12 +160,16 @@ class MainApp(qtw.QApplication):
         self.patch_button.clicked.disconnect(self.run_patcher)
         self.patch_button.clicked.connect(self.cancel_patcher)
 
+        self.start_time = time.time()
+
         self.patcher_thread.start()
 
     def done(self):
         self.patch_button.setText("Patch!")
         self.patch_button.clicked.disconnect(self.cancel_patcher)
         self.patch_button.clicked.connect(self.run_patcher)
+
+        self.log.info(f"Patch completed in {(time.time() - self.start_time):.3f} second(s).")
 
     def cancel_patcher(self):
         self.patcher_thread.terminate()

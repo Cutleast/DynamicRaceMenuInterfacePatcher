@@ -97,14 +97,14 @@ class Patcher:
             id = sprite["SpriteID"]
             char_id = sprite["CharacterID"]
             self.log.info(f"Patching sprite {c+1} of {len(self.patch_data['sprites'])}...")
-            sprite_item = xml_tags.find(f"//item[@spriteId='{id}']")
+            sprite_item = xml_tags.find(f"./item[@spriteId='{id}']")
             if sprite_item is None:
                 self.log.warning(
                     f"Failed to patch sprite with id '{id}': Sprite not found in XML!"
                 )
                 continue
             matrix_item = sprite_item.find(
-                f"//subTags/item[@characterId='{char_id}']/matrix"
+                f"./subTags/item[@characterId='{char_id}']/matrix"
             )
             if matrix_item is None:
                 self.log.warning(
@@ -116,15 +116,15 @@ class Patcher:
         
         # Patch texts
         for c, text in enumerate(self.patch_data.get("text", [])):
-            char_ids = text["CharacterID"]
+            char_ids = text["indexes"]
             self.log.info(f"Patching text {c+1} of {len(self.patch_data['text'])}...")
-            font_id = text["fontId"]
+            font_id = text["font"]
             outlines = text["useOutlines"]
             hex_color = text["color"]
             rgb_color = utils.hex_to_rgb(hex_color)
 
             for char_id in char_ids:
-                text_item = xml_tags.find(f"//item[@characterID='{char_id}']")
+                text_item = xml_tags.find(f"./item[@characterID='{char_id}']")
                 if text_item is None:
                     self.log.warning(
                         f"Failed to patch text with character id '{char_id}': Text not found in XML!"
@@ -141,26 +141,26 @@ class Patcher:
                 text_item.attrib["initialText"] = init_text_enc
 
                 # Patch textColor tag
-                text_color = text_item.find("//textColor[@type='RGBA']")
-                text_color["red"] = rgb_color[0]
-                text_color["green"] = rgb_color[1]
-                text_color["blue"] = rgb_color[2]
-                text_color["alpha"] = rgb_color[3]
+                text_color = text_item.find("./textColor[@type='RGBA']")
+                text_color.attrib["red"] = str(rgb_color[0])
+                text_color.attrib["green"] = str(rgb_color[1])
+                text_color.attrib["blue"] = str(rgb_color[2])
+                text_color.attrib["alpha"] = str(rgb_color[3])
 
         self.log.info("Writing XML file...")
-        with open(xml_file, "w", encoding="utf8") as file:
+        with open(xml_file, "wb") as file:
             xml_data.write(file, encoding="utf8")
 
         self.log.info("Patched XML file.")
 
     def _patch_shapes(self):
         shapes: Dict[Path, List[int]] = {}
-        for shape in self.patch_data.get("shapes", []):
-            shape = self.patch_path / shape["filePath"]
-            if shape in shapes:
-                shapes[shape] += shape["index"]
+        for shape_data in self.patch_data.get("shapes", []):
+            shape_path = self.patch_path / shape_data["filePath"]
+            if shape_path in shapes:
+                shapes[shape_path] += shape_data["index"]
             else:
-                shapes[shape] = shape["index"]
+                shapes[shape_path] = shape_data["index"]
         
         self.ffdec_interface.replace_shapes(shapes)
 
@@ -179,7 +179,7 @@ class Patcher:
         self.log.info("Patching RaceMenu...")
 
         # 0) Create Temp folder
-        with tmp.TemporaryDirectory() as tmpdir:
+        with tmp.TemporaryDirectory(prefix="RIP_") as tmpdir:
             tmpdir = Path(tmpdir).resolve()
 
             # 1) Extract RaceMenu BSA to Temp folder
@@ -190,7 +190,7 @@ class Patcher:
             self.ffdec_interface = ffdec.FFDec(swf_path, self.app)
 
             # 3) Patch shapes into SWF
-            self._patch_shapes(tmpdir)
+            self._patch_shapes()
 
             # 4) Convert SWF to XML
             xml_file = self.ffdec_interface.swf2xml()
@@ -202,6 +202,9 @@ class Patcher:
             patched_swf = self.ffdec_interface.xml2swf(xml_file)
 
             # 7) Copy patched SWF to current directory
+            if (Path(".") / "interface").is_dir():
+                shutil.rmtree(Path(".") / "interface")
+                self.log.warning("Overwritten already existing SWF!")
             os.mkdir(Path(".") / "interface")
             shutil.copyfile(
                 patched_swf,

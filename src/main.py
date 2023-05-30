@@ -56,7 +56,7 @@ class MainApp(qtw.QApplication):
         sys.excepthook = self.handle_exception
 
         self.root = qtw.QWidget()
-        self.root.setWindowTitle(f"{self.name} v{self.version}")
+        self.root.setWindowTitle(f"{self.name} v{self.version} [DO NOT REDISTRIBUTE]")
         self.root.setStyleSheet((Path(".") / "assets" / "style.qss").read_text())
         self.root.setMinimumWidth(1000)
         self.root.setMinimumHeight(500)
@@ -110,6 +110,9 @@ class MainApp(qtw.QApplication):
         patch_path_button.clicked.connect(browse_patch)
 
         self.conf_layout.addWidget(patch_path_button, 1, 2)
+
+        self.vr_checkbox = qtw.QCheckBox("VR Version")
+        self.layout.addWidget(self.vr_checkbox, 0, qtc.Qt.AlignmentFlag.AlignHCenter)
 
         self.protocol_widget = qtw.QTextEdit()
         self.protocol_widget.setReadOnly(True)

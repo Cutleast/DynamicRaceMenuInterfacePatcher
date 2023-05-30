@@ -57,6 +57,9 @@ class FFDec:
         self.log.debug(f"Replacing shape '{shape.stem}' at {index}...")
 
         shape = shape.resolve()
+        if not shape.is_file():
+            self.log.error("Failed to patch shape: File does not exist!")
+            return
         args = f"""-replace "{self._swf_path}" "{self._swf_path}" {index} "{shape}" nofill"""
         self._exec_command(args)
 

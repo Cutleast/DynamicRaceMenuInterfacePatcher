@@ -34,6 +34,7 @@ class Patcher:
     patch_path: Path = None
     racemenu_path: Path = None
     ffdec_interface: ffdec.FFDec = None
+    patch_dir: Path = None
 
     def __init__(self, app: MainApp, patch_path: Path, racemenu_path: Path):
         self.app = app
@@ -65,22 +66,24 @@ class Patcher:
         
         self.log.info("Loaded patch!")
 
-    def _extract_bsa(self, tmpdir: Path):
+    def _extract_bsa(self):
         bsa_path = self.racemenu_path / "RaceMenu.bsa"
         if not bsa_path.is_file():
             self.log.error("RaceMenu.bsa could not be found!")
             raise errors.BSANotFoundError
 
         self.log.debug("Extracting RaceMenu.bsa...")
+
+        output_path = self.tmpdir / bsa_path.stem
         
-        os.mkdir(tmpdir / bsa_path.stem)
+        os.mkdir(output_path)
         archive = BSAArchive.parse_file(str(bsa_path))
-        archive.extract(tmpdir / bsa_path.stem)
+        archive.extract(output_path)
 
         self.log.debug("Extracted BSA.")
-        return tmpdir / bsa_path.stem
+        return output_path
 
-    def _patch_xml(self, xml_file: Path):
+    def _patch_xml(self, xml_file: Path, patch_data: dict):
         self.log.info("Reading XML file...")
 
         xml_data = ET.parse(str(xml_file))
@@ -91,10 +94,10 @@ class Patcher:
         self.log.info("Patching XML file...")
 
         # Patch sprites
-        for c, sprite in enumerate(self.patch_data.get("sprites", [])):
+        for c, sprite in enumerate(patch_data.get("sprites", [])):
             id = sprite["SpriteID"]
             char_id = sprite["CharacterID"]
-            self.log.info(f"Patching sprite {c+1} of {len(self.patch_data['sprites'])}...")
+            self.log.info(f"Patching sprite {c+1} of {len(patch_data['sprites'])}...")
             sprite_item = xml_tags.find(f"./item[@spriteId='{id}']")
             if sprite_item is None:
                 self.log.warning(
@@ -113,9 +116,9 @@ class Patcher:
                 matrix_item.attrib[key] = str(value)
         
         # Patch texts
-        for c, text in enumerate(self.patch_data.get("text", [])):
+        for c, text in enumerate(patch_data.get("text", [])):
             char_ids = text["indexes"]
-            self.log.info(f"Patching text {c+1} of {len(self.patch_data['text'])}...")
+            self.log.info(f"Patching text {c+1} of {len(patch_data['text'])}...")
             font_id = text["font"]
             outlines = text["useOutlines"]
             hex_color = text["color"]
@@ -151,9 +154,9 @@ class Patcher:
 
         self.log.info("Patched XML file.")
 
-    def _patch_shapes(self):
+    def _patch_shapes(self, patch_data: dict):
         shapes: Dict[Path, List[int]] = {}
-        for shape_data in self.patch_data.get("shapes", []):
+        for shape_data in patch_data.get("shapes", []):
             shape_path = self.patch_path / shape_data["filePath"]
             if shape_path in shapes:
                 shapes[shape_path] += shape_data["index"]
@@ -161,6 +164,38 @@ class Patcher:
                 shapes[shape_path] = shape_data["index"]
         
         self.ffdec_interface.replace_shapes(shapes)
+
+    def _patch_swf(self, swf_path: Path, patch_data: dict):
+        # 2) Initialize FFDec interface
+        self.ffdec_interface = ffdec.FFDec(swf_path, self.app)
+
+        # 3) Patch shapes into SWF
+        self._patch_shapes(patch_data)
+
+        # 4) Check if XML has to be done
+        if patch_data.get("text") or patch_data.get("sprites"):
+            # 4) Convert SWF to XML
+            xml_file = self.ffdec_interface.swf2xml()
+
+            # 5) Patch XML
+            self._patch_xml(xml_file, patch_data)
+
+            # 6) Convert XML back to SWF
+            patched_swf = self.ffdec_interface.xml2swf(xml_file).resolve()
+        else:
+            patched_swf = swf_path.resolve()
+
+        # 7) Copy patched SWF to current directory
+        output_path = Path(".") / swf_path.relative_to(self.tmpdir / "RaceMenu")
+        output_path = output_path.resolve()
+        os.makedirs(output_path.parent, exist_ok=True)
+        if output_path.is_file():
+            self.log.warning("Existing file gets overwritten!")
+            os.remove(output_path)
+        shutil.copyfile(
+            patched_swf,
+            output_path
+        )
 
     def patch(self):
         """
@@ -178,36 +213,21 @@ class Patcher:
 
         # 0) Create Temp folder
         with tmp.TemporaryDirectory(prefix="RIP_") as tmpdir:
-            tmpdir = Path(tmpdir).resolve()
+            self.tmpdir = Path(tmpdir).resolve()
 
             # 1) Extract RaceMenu BSA to Temp folder
-            bsa_path = self._extract_bsa(tmpdir)
+            bsa_path = self._extract_bsa()
 
-            # 2) Initialize FFDec interface
-            swf_path = bsa_path / "interface" / "racesex_menu.swf"
-            self.ffdec_interface = ffdec.FFDec(swf_path, self.app)
+            # 2) Patch SWFs according to patch data
+            self.log.info(f"Patching for VR version: {self.app.vr_checkbox.isChecked()}")
+            for c, (file, patch_data) in enumerate(self.patch_data.items()):
+                if self.app.vr_checkbox.isChecked():
+                    file: Path = bsa_path / "interface" / "vr" / file
+                else:
+                    file: Path = bsa_path / "interface" / file
+                self.log.info(f"Patching file '{file.name}'... ({c+1}/{len(self.patch_data)})")
 
-            # 3) Patch shapes into SWF
-            self._patch_shapes()
-
-            # 4) Convert SWF to XML
-            xml_file = self.ffdec_interface.swf2xml()
-
-            # 5) Patch XML
-            self._patch_xml(xml_file)
-
-            # 6) Convert XML back to SWF
-            patched_swf = self.ffdec_interface.xml2swf(xml_file)
-
-            # 7) Copy patched SWF to current directory
-            if (Path(".") / "interface").is_dir():
-                shutil.rmtree(Path(".") / "interface")
-                self.log.warning("Overwritten already existing SWF!")
-            os.mkdir(Path(".") / "interface")
-            shutil.copyfile(
-                patched_swf,
-                Path(".") / "interface" / "racesex_menu.swf"
-            )
+                self._patch_swf(file, patch_data)
 
         self.log.info("Patch complete!")
         self.app.done_signal.emit()

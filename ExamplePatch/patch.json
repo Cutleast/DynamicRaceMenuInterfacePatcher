@@ -2,73 +2,91 @@
 // if you are a mod author and want to create a RaceMenu Patch.
 
 {
-    "shapes": [
-        {
-            "index": [146],
-            "filePath": "shapes/146.svg"
-        },
-        {
-            "index": [188],
-            "filePath": "shapes/188.svg"
-        },
-        {
-            "index": [93],
-            "filePath": "shapes/93.svg"
-        }
-    ],
+    "racesex_menu.swf": {
+        "shapes": [
+            {
+                "index": [146],
+                "filePath": "shapes/146.svg"
+            },
+            {
+                "index": [188],
+                "filePath": "shapes/188.svg"
+            },
+            {
+                "index": [93],
+                "filePath": "shapes/93.svg"
+            }
+        ],
 
-    "text": [
-        {
-            "indexes": [3, 5, 7],
-            "font": "54",
-            "useOutlines": "true",
-            // Use the first 6 digits to define the color
-            // The last two define the transparency.
-            // If you don't want any transparency at all,
-            // just leave them 'ff'.
-            "color": "12345678"
-        },
-        {
-            "indexes": [4, 8, 9],
-            "font": "45",
-            "useOutlines": "false",
-            "color": "000000ff"
-        }
-    ],
+        "text": [
+            {
+                "indexes": [3, 5, 7],
+                "font": "54",
+                "useOutlines": "true",
+                // Use the first 6 digits to define the color
+                // The last two define the transparency.
+                // If you don't want any transparency at all,
+                // just leave them 'ff'.
+                "color": "12345678"
+            },
+            {
+                "indexes": [4, 8, 9],
+                "font": "45",
+                "useOutlines": "false",
+                "color": "000000ff"
+            }
+        ],
 
-    // Sprites will be edited inside the XML 
-    // after Shape and Text Edits
-    "sprites": [
-        {
-            "SpriteID": 1,
-            "CharacterID": 20,
-            "MATRIX": {
-                "translateX": 100,
-                "translateY": -100,
-                "scaleX": 1,
-                "scaleY": 45,
-                "rotateSkew0": 90,
-                "rotateSkew1": 175,
-                "hasScale": true,
-                "hasRotate": true
+        // Sprites will be edited inside the XML 
+        // after Shape and Text Edits
+        "sprites": [
+            {
+                "SpriteID": 1,
+                "CharacterID": 20,
+                "MATRIX": {
+                    "translateX": 100,
+                    "translateY": -100,
+                    "scaleX": 1,
+                    "scaleY": 45,
+                    "rotateSkew0": 90,
+                    "rotateSkew1": 175,
+                    "hasScale": true,
+                    "hasRotate": true
+                }
+            },
+            {
+                "SpriteID": 1,
+                "CharacterID": 21,
+                "MATRIX":  {
+                    "translateX": 130,
+                    "translateY": 110,
+                    "scaleX": 4,
+                    "scaleY": 425
+                }
+            },
+            {
+                "SpriteID": 6,
+                "CharacterID": 21,
+                "MATRIX": {
+                    "scaleY": 25
+                }
             }
-        },
-        {
-            "SpriteID": 1,
-            "CharacterID": 21,
-            "MATRIX":  {
-                "translateX": 130,
-                "translateY": 110,
-                "scaleX": 4,
-                "scaleY": 425
+        ]
+    },
+    "racemenu/racesex_icons.swf": {
+        "shapes": [
+            {
+                "index": [1, 2, 4],
+                "filePath": "shapes/1.svg"
             }
-        },
-        {
-            "SpriteID": 6,
-            "CharacterID": 21,
-            "MATRIX": {
-                "scaleY": 25
+        ]
+    },
+    "racemenu/buttonart.swf": {
+        "shapes": [
+            {
+                "index": [3],
+                "filePath": "shapes/3.svg"
             }
-        }
-    ]
+        ]
+    }
 }

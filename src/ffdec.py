@@ -6,11 +6,8 @@ Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
 """
 
 import logging
-import os
-import shutil
 import subprocess
 import sys
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List
 
@@ -34,7 +31,7 @@ class FFDec:
         self.log.setLevel(self.app.log.level)
 
         self._swf_path = swf_path
-    
+
     def __repr__(self):
         return "FFDecInterface"
 
@@ -54,7 +51,7 @@ class FFDec:
             self._pid = process.pid
             for line in process.stdout:
                 self.log.info(f"[FFDec]: {line}")
-        
+
         self._pid = None
 
     def _replace_shape(self, shape: Path, index: int):
@@ -65,7 +62,7 @@ class FFDec:
         self._exec_command(args)
 
         self.log.debug("Shape replaced.")
-    
+
     def replace_shapes(self, shapes: Dict[Path, List[int]]):
         """
         Replaces shapes in SWF by <shapes>.

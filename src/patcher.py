@@ -8,18 +8,22 @@ Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
 
 import logging
 import os
+import re
+import html
 import shutil
 import tempfile as tmp
-import xmltodict as xml2d
-import dicttoxml2 as d2xml
+import xml.etree.ElementTree as ET  # This is not the movie "E.T."!!!
 from pathlib import Path
 from typing import Dict, List
 
+import dicttoxml2 as d2xml
 import jstyleson as json
+import xmltodict as xml2d
 from bethesda_structs.archive.bsa import BSAArchive
 
 import errors
 import ffdec
+import utils
 from main import MainApp
 
 
@@ -48,6 +52,10 @@ class Patcher:
         return "Patcher"
 
     def load_patch_data(self):
+        """
+        Loads patch data from patch.json.
+        """
+
         self.log.info(f"Loading patch '{self.patch_path.name}'...")
         patch_data_file = self.patch_path / "patch.json"
 
@@ -77,20 +85,78 @@ class Patcher:
     def _patch_xml(self, xml_file: Path):
         self.log.info("Reading XML file...")
 
-        xml_data = xml2d.parse(xml_file.read_text())
+        xml_data = ET.parse(str(xml_file))
+        xml_root = xml_data.getroot()
+        xml_tags = xml_root[1]
 
         # WIP: No patching takes place, yet
         self.log.info("Patching XML file...")
 
+        # Patch sprites
+        for c, sprite in enumerate(self.patch_data.get("sprites", [])):
+            id = sprite["SpriteID"]
+            char_id = sprite["CharacterID"]
+            self.log.info(f"Patching sprite {c+1} of {len(self.patch_data['sprites'])}...")
+            sprite_item = xml_tags.find(f"//item[@spriteId='{id}']")
+            if sprite_item is None:
+                self.log.warning(
+                    f"Failed to patch sprite with id '{id}': Sprite not found in XML!"
+                )
+                continue
+            matrix_item = sprite_item.find(
+                f"//subTags/item[@characterId='{char_id}']/matrix"
+            )
+            if matrix_item is None:
+                self.log.warning(
+                    f"Failed to patch sprite with id '{id}': Matrix not found for character id '{char_id}'!"
+                )
+                continue
+            for key, value in sprite["MATRIX"].items():
+                matrix_item.attrib[key] = str(value)
+        
+        # Patch texts
+        for c, text in enumerate(self.patch_data.get("text", [])):
+            char_ids = text["CharacterID"]
+            self.log.info(f"Patching text {c+1} of {len(self.patch_data['text'])}...")
+            font_id = text["fontId"]
+            outlines = text["useOutlines"]
+            hex_color = text["color"]
+            rgb_color = utils.hex_to_rgb(hex_color)
+
+            for char_id in char_ids:
+                text_item = xml_tags.find(f"//item[@characterID='{char_id}']")
+                if text_item is None:
+                    self.log.warning(
+                        f"Failed to patch text with character id '{char_id}': Text not found in XML!"
+                    )
+                    continue
+                text_item.attrib["fontId"] = str(font_id)
+                text_item.attrib["useOutlines"] = str(outlines).lower()
+                
+                # Patch initial text
+                init_text = text_item.attrib["initialText"]
+                init_text_dec = html.unescape(init_text)
+                init_text_dec = re.sub('color="(.*?)"', f'color="{hex_color}"', init_text_dec)
+                init_text_enc = html.escape(init_text_dec)
+                text_item.attrib["initialText"] = init_text_enc
+
+                # Patch textColor tag
+                text_color = text_item.find("//textColor[@type='RGBA']")
+                text_color["red"] = rgb_color[0]
+                text_color["green"] = rgb_color[1]
+                text_color["blue"] = rgb_color[2]
+                text_color["alpha"] = rgb_color[3]
+
         self.log.info("Writing XML file...")
-        xml_file.write_bytes(d2xml.dicttoxml(xml_data))
+        with open(xml_file, "w", encoding="utf8") as file:
+            xml_data.write(file, encoding="utf8")
 
         self.log.info("Patched XML file.")
 
     def _patch_shapes(self):
         shapes: Dict[Path, List[int]] = {}
         for shape in self.patch_data.get("shapes", []):
-            shape = self.patch_path / shape
+            shape = self.patch_path / shape["filePath"]
             if shape in shapes:
                 shapes[shape] += shape["index"]
             else:
@@ -99,11 +165,22 @@ class Patcher:
         self.ffdec_interface.replace_shapes(shapes)
 
     def patch(self):
+        """
+        Patches RaceMenu through following process:
+            1. Extract RaceMenu BSA to a temp folder.
+            2. Initialize FFDec commandline interface.
+            3. Patch shapes.
+            4. Convert SWF to XML.
+            5. Patch XML.
+            6. Convert XML back to SWF.
+            7. Copy SWF to current directory.
+        """
+
         self.log.info("Patching RaceMenu...")
-        
+
         # 0) Create Temp folder
         with tmp.TemporaryDirectory() as tmpdir:
-            tmpdir = Path(tmpdir)
+            tmpdir = Path(tmpdir).resolve()
 
             # 1) Extract RaceMenu BSA to Temp folder
             bsa_path = self._extract_bsa(tmpdir)

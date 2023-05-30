@@ -5,9 +5,7 @@ Contains utility classes and functions.
 Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
 """
 
-import os
 import sys
-from pathlib import Path
 from typing import Callable
 
 import qtpy.QtCore as qtc
@@ -36,6 +34,12 @@ class Thread(qtc.QThread):
 
 
 class StdoutHandler(qtc.QObject):
+    """
+    Redirector class for sys.stdout.
+
+    Redirects sys.stdout to self.output_signal [QtCore.Signal].
+    """
+
     output_signal = qtc.Signal(object)
 
     def __init__(self, parent: qtc.QObject):
@@ -56,3 +60,9 @@ class StdoutHandler(qtc.QObject):
             sys.stdout = self._stream
         except AttributeError:
             pass
+
+
+def hex_to_rgb(value: str):
+    value = value.lstrip('#')
+    lv = len(value)
+    return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))

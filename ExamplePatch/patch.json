@@ -5,23 +5,23 @@
     "shapes": [
         {
             "index": [1],
-            "NewFile": "shapes/shape1.svg"
+            "filePath": "shapes/shape1.svg"
         },
         {
-            "index": [2,3],
-            "NewFile": "shapes/shape2.svg"
+            "index": [2, 3],
+            "filePath": "shapes/shape2.svg"
         },
         {
             "index": [4],
-            "NewFile": "shapes/shape3.svg"
+            "filePath": "shapes/shape3.svg"
         }
     ],
 
     "text": [
         {
-            "index": [3, 5, 7],
-            "font": 54,
-            "useoutlines": 0,
+            "indexes": [3, 5, 7],
+            "font": "54",
+            "useOutlines": "true",
             // Use the first 6 digits to define the color
             // The last two define the transparency.
             // If you don't want any transparency at all,
@@ -29,9 +29,9 @@
             "color": "ffffffff"
         },
         {
-            "index": [4, 8, 9],
-            "font": 45,
-            "useoutlines": 1,
+            "indexes": [4, 8, 9],
+            "font": "45",
+            "useOutlines": "false",
             "color": "000000ff"
         }
     ],

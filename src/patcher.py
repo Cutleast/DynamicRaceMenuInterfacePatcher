@@ -212,7 +212,7 @@ class Patcher:
         self.log.info("Patching RaceMenu...")
 
         # 0) Create Temp folder
-        with tmp.TemporaryDirectory(prefix="RIP_") as tmpdir:
+        with tmp.TemporaryDirectory(prefix="DRIP_") as tmpdir:
             self.tmpdir = Path(tmpdir).resolve()
 
             # 1) Extract RaceMenu BSA to Temp folder

@@ -26,7 +26,7 @@ class MainApp(qtw.QApplication):
     """
 
     # Application properties
-    name = "RaceMenu Interface Patcher"
+    name = "Dynamic RaceMenu Interface Patcher"
     version = "1.0"
 
     patcher_thread: utils.Thread = None

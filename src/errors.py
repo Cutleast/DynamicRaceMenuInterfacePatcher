@@ -1,5 +1,5 @@
 """
-Part of RaceMenu Interface Patcher (RIP).
+Part of Dynamic RaceMenu Interface Patcher (DRIP).
 Contains Exception classes.
 
 Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International

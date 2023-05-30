@@ -1,5 +1,5 @@
 """
-Name: RaceMenu Interface Patcher (RIP)
+Name: Dynamic RaceMenu Interface Patcher (DRIP)
 Author: Cutleast
 License: Attribution-NonCommercial-NoDerivatives 4.0 International
 Python Version: 3.11.2

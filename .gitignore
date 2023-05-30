@@ -5,4 +5,4 @@ tests
 main.build
 main.dist
 *.old
-src/interface/racesex_menu.swf
+src/interface/*

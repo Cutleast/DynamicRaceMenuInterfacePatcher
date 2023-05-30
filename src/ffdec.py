@@ -1,5 +1,5 @@
 """
-Part of RaceMenu Interface Patcher (RIP).
+Part of Dynamic RaceMenu Interface Patcher (DRIP).
 Contains FFDec (JPEXS Free Flash Decompiler) interface.
 
 Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International

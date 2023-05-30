@@ -11,7 +11,9 @@
 
 # Description
 
-This is a dynamic patching tool for the Skyrim mod RaceMenu by expired6978 to work with different ui overhaul mods. The tool requires a compatible patch to work. More info on this can be found in the documentation (coming soon!).
+This is a dynamic patching tool for the Skyrim mod RaceMenu by expired6978 to work with different ui overhaul mods.
+**No assets or files by the original mod author (expired6978) get redistributed! Patching takes place exclusively locally and redistribution of the patched files is strictly prohibited according to expired6978's permissions.**
+The tool requires a compatible patch to work. More info on this can be found in the documentation (coming soon!).
 
 # Features
 - Fully automated patching
@@ -26,7 +28,7 @@ If you encountered an issue/error or you have a suggestion, create an issue unde
 
 ### 2. Code contributions
 
-1. Install Python 3.9 (Make sure that you add it to PATH!)
+1. Install Python 3.11 (Make sure that you add it to PATH!)
 2. Clone repository
 3. Open terminal in repository folder
 4. Type in following command to install all requirements:

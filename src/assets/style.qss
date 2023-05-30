@@ -78,26 +78,3 @@ QTextEdit#protocol {
     font-family: Consolas;
     font-size: 13px;
 }
-
-/* QCheckBox */
-QCheckBox {
-    color: #ffffff;
-    font-family: Arial;
-    font-size: 14px;
-    border: 0px solid;
-    border-radius: 8px;
-    spacing: 15px;
-}
-QCheckBox::indicator {
-    background-color: #2d2d2d;
-    width: 15px;
-    height: 15px;
-    border: 2px solid #2d2d2d;
-    border-radius: 4px;
-    padding: 2px;
-}
-QCheckBox::indicator:checked {
-    background-color: #f38064;
-    image: url("./assets/checkmark.svg");
-    color: #ffffff;
-}

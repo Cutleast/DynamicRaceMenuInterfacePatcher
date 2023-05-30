@@ -219,12 +219,8 @@ class Patcher:
             bsa_path = self._extract_bsa()
 
             # 2) Patch SWFs according to patch data
-            self.log.info(f"Patching for VR version: {self.app.vr_checkbox.isChecked()}")
             for c, (file, patch_data) in enumerate(self.patch_data.items()):
-                if self.app.vr_checkbox.isChecked():
-                    file: Path = bsa_path / "interface" / "vr" / file
-                else:
-                    file: Path = bsa_path / "interface" / file
+                file: Path = bsa_path / "interface" / file
                 self.log.info(f"Patching file '{file.name}'... ({c+1}/{len(self.patch_data)})")
 
                 self._patch_swf(file, patch_data)

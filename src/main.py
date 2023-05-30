@@ -111,9 +111,6 @@ class MainApp(qtw.QApplication):
 
         self.conf_layout.addWidget(patch_path_button, 1, 2)
 
-        self.vr_checkbox = qtw.QCheckBox("VR Version")
-        self.layout.addWidget(self.vr_checkbox, 0, qtc.Qt.AlignmentFlag.AlignHCenter)
-
         self.protocol_widget = qtw.QTextEdit()
         self.protocol_widget.setReadOnly(True)
         self.protocol_widget.setObjectName("protocol")

@@ -1,7 +1,7 @@
 <p align="center">
 [ICON PLACEHOLDER]
 <br>
-<a href="https://www.nexusmods.com/site/mods/545/"><img src="repo_assets/nexus-mods.png" height="60px"/> </a>
+<a href="https://www.nexusmods.com/skyrimspecialedition/mods/92345"><img src="repo_assets/nexus-mods.png" height="60px"/> </a>
 <a href="https://ko-fi.com/cutleast"><img src="repo_assets/ko-fi.png" height="60px"/> </a>
 <br>
 

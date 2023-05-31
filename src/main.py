@@ -41,7 +41,7 @@ class MainApp(qtw.QApplication):
         self.log = logging.getLogger(self.__repr__())
         log_fmt = "[%(asctime)s.%(msecs)03d]"
         log_fmt += "[%(levelname)s]"
-        log_fmt += "[%(threadName)s.%(name)s.%(funcName)s]: "
+        log_fmt += "[%(name)s.%(funcName)s]: "
         log_fmt += "%(message)s"
         self.log_fmt = logging.Formatter(
             log_fmt,
@@ -189,21 +189,19 @@ class MainApp(qtw.QApplication):
         self.done()
         self.log.warning("Patch incomplete!")
 
-    # WIP: Both methods below are not working
-    # Reason: unknown
     def scan_for_racemenu(self):
         parent_folder = Path(".").parent
 
-        for folder in parent_folder.glob("RaceMenu*\\RaceMenu.bsa"):
-            return str(folder.resolve())
+        for folder in parent_folder.glob("**\\RaceMenu.bsa"):
+            return str(folder.resolve().parent)
 
         return ""
 
     def scan_for_patch(self):
         parent_folder = Path(".").parent
 
-        for folder in parent_folder.glob("*\\patch.json"):
-            return str(folder.resolve())
+        for folder in parent_folder.glob("**\\patch.json"):
+            return str(folder.resolve().parent)
 
         return ""
 

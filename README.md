@@ -1,4 +1,5 @@
 # Dynamic Race Menu Interface Patcher (DRIP)
+
 <p align="center">
 [ICON PLACEHOLDER]
 <br>
@@ -14,9 +15,11 @@
 
 This is a dynamic patching tool for the Skyrim mod RaceMenu by expired6978 to work with different ui overhaul mods.
 **No assets or files by the original mod author (expired6978) get redistributed! Patching takes place exclusively locally and redistribution of the patched files is strictly prohibited according to expired6978's permissions.**
-The tool requires a compatible patch to work. More info on this can be found in the documentation (coming soon!).
+The tool requires a compatible patch to work. Those can be found on the Skyrim nexus on Nexus Mods by searching for something like "DRIP Patch".
+More info on creating patches can be found in the [documentation](./DOCUMENTATION.md).
 
 # Features
+
 - Fully automated patching
 - Automatic extraction of BSA
 - Can be installed as a mod in MO2 or Vortex
@@ -39,7 +42,7 @@ If you encountered an issue/error or you have a suggestion, create an issue unde
 
 1. Open terminal in src folder
 2. Execute main file
-    `python main.py`
+   `python main.py`
 
 ### 4. Compile and build executable
 
@@ -48,6 +51,7 @@ If you encountered an issue/error or you have a suggestion, create an issue unde
 3. The executable and all dependencies are built in the main.dist-Folder.
 
 # How it works
+
 1. Extracts RaceMenu BSA to a temp folder.
 2. Initializes FFDec commandline interface.
 3. Patches shapes.
@@ -57,6 +61,7 @@ If you encountered an issue/error or you have a suggestion, create an issue unde
 7. Copies SWF to current directory.
 
 # Credits
+
 - Qt by The [Qt Company Ltd](https://qt.io)
 - [bethesda-structs](https://github.com/stephen-bunn/bethesda-structs) by [Stephen Bunn](https://github.com/stephen-bunn)
 - [FFDec](https://github.com/jindrapetrik/jpexs-decompiler) by [Jindra Petřík](https://github.com/jindrapetrik)

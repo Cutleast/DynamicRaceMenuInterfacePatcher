@@ -57,8 +57,9 @@ class MainApp(qtw.QApplication):
         sys.excepthook = self.handle_exception
 
         self.root = qtw.QWidget()
-        self.root.setWindowTitle(f"{self.name} v{self.version} [DO NOT REDISTRIBUTE]")
+        self.root.setWindowTitle(f"{self.name} v{self.version}")
         self.root.setStyleSheet((Path(".") / "assets" / "style.qss").read_text())
+        self.root.setWindowIcon(qtg.QIcon("./assets/icon.ico"))
         self.root.setMinimumWidth(1000)
         self.root.setMinimumHeight(500)
 

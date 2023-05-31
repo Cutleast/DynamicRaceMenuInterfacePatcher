@@ -31,6 +31,12 @@ class Thread(qtc.QThread):
 
     def run(self):
         self.target()
+    
+    def __repr__(self):
+        return self.objectName()
+
+    def __str__(self):
+        return self.objectName()
 
 
 class StdoutHandler(qtc.QObject):

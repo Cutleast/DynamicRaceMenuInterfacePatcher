@@ -29,17 +29,17 @@ QPushButton:disabled {
 QScrollBar {
     background-color: #2d2d2d;
     border: 0px solid;
-    border-radius: 4px;
-    width: 10px;
+    border-radius: 3px;
+    width: 6px;
 }
 QScrollBar::handle {
-    background-color: #696969;
+    background-color: #383838;
     border: 0px solid;
-    border-radius: 4px;
-    width: 10px;
+    border-radius: 3px;
+    width: 6px;
 }
 QScrollBar::handle:hover, QScrollBar::handle:pressed {
-    background-color: #f38064;
+    background-color: #696969;
 }
 QScrollBar::up-button, QScrollBar::down-button {
     width: 0px;

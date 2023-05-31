@@ -35,6 +35,7 @@ class Patcher:
     racemenu_path: Path = None
     ffdec_interface: ffdec.FFDec = None
     patch_dir: Path = None
+    tmpdir: Path = None
 
     def __init__(self, app: MainApp, patch_path: Path, racemenu_path: Path):
         self.app = app
@@ -59,11 +60,11 @@ class Patcher:
         patch_data_file = self.patch_path / "patch.json"
 
         if not patch_data_file.is_file():
-            raise errors.InvalidPatchError
-        
+            raise errors.InvalidPatchError("Found no 'patch.json'!")
+
         with open(patch_data_file, "r", encoding="utf8") as file:
             self.patch_data: dict = json.load(file)
-        
+
         self.log.info("Loaded patch!")
 
     def _extract_bsa(self):

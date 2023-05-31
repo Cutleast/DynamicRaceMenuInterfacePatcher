@@ -12,7 +12,7 @@ import os
 import re
 import shutil
 import tempfile as tmp
-import xml.etree.ElementTree as ET  # This is not the movie "E.T."!!!
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, List
 
@@ -113,8 +113,8 @@ class Patcher:
                 )
                 continue
             for key, value in sprite["MATRIX"].items():
-                matrix_item.attrib[key] = str(value)
-        
+                matrix_item.attrib[key] = str(value).lower()
+
         # Patch texts
         for c, text in enumerate(patch_data.get("text", [])):
             char_ids = text["indexes"]
@@ -133,7 +133,7 @@ class Patcher:
                     continue
                 text_item.attrib["fontId"] = str(font_id)
                 text_item.attrib["useOutlines"] = str(outlines).lower()
-                
+
                 # Patch initial text
                 init_text = text_item.attrib["initialText"]
                 init_text_dec = html.unescape(init_text)
@@ -162,7 +162,7 @@ class Patcher:
                 shapes[shape_path] += shape_data["index"]
             else:
                 shapes[shape_path] = shape_data["index"]
-        
+
         self.ffdec_interface.replace_shapes(shapes)
 
     def _patch_swf(self, swf_path: Path, patch_data: dict):

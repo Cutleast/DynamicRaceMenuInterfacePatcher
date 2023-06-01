@@ -193,7 +193,6 @@ class MainApp(qtw.QApplication):
 
     def scan_for_racemenu(self):
         parent_folder = Path(".").resolve().parent.parent
-        print(f"{parent_folder = }")
 
         for folder in parent_folder.glob("**\\RaceMenu.bsa"):
             return str(folder.resolve().parent)
@@ -202,7 +201,6 @@ class MainApp(qtw.QApplication):
 
     def scan_for_patch(self):
         parent_folder = Path(".").resolve().parent.parent
-        print(f"{parent_folder = }")
 
         for folder in parent_folder.glob("**\\patch.json"):
             return str(folder.resolve().parent)

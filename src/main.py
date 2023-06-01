@@ -122,6 +122,27 @@ class MainApp(qtw.QApplication):
         self.patch_button.clicked.connect(self.run_patcher)
         self.layout.addWidget(self.patch_button)
 
+        docs_label = qtw.QLabel(
+            "\
+Interested in creating own patches? \
+Read the documentation \
+<a href='https://github.com/Cutleast/DynamicRaceMenuInterfacePatcher/blob/main/DOCUMENTATION.md'>\
+here</a>.\
+"
+        )
+        docs_label.setTextFormat(qtc.Qt.TextFormat.RichText)
+        docs_label.setAlignment(qtc.Qt.AlignmentFlag.AlignRight)
+        docs_label.setOpenExternalLinks(True)
+        self.layout.addWidget(docs_label)
+
+        # Fix link color
+        palette = self.palette()
+        palette.setColor(
+            palette.ColorRole.Link,
+            qtg.QColor("#f38064")
+        )
+        self.setPalette(palette)
+
         self.std_handler.output_signal.connect(self.handle_stdout)
         self.std_handler.output_signal.emit(self.std_handler._content)
         self.done_signal.connect(self.done)

@@ -4,5 +4,9 @@ tests
 *__pycache__
 main.build
 main.dist
+main.onefile-build
+DRIP.exe
+interface
+DRIP_with_fomod
 *.old
 src/interface/*

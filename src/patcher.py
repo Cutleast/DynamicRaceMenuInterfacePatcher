@@ -195,7 +195,8 @@ class Patcher:
             patched_swf = swf_path.resolve()
 
         # 7) Copy patched SWF to current directory
-        output_path = Path(".") / swf_path.relative_to(self.tmpdir / "RaceMenu")
+        output_path = Path(".").resolve().parent / swf_path.relative_to(self.tmpdir / "RaceMenu")
+        self.log.info(f"Writing output to '{output_path}'")
         output_path = output_path.resolve()
         os.makedirs(output_path.parent, exist_ok=True)
         if output_path.is_file():

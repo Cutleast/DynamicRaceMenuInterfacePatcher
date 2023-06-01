@@ -53,9 +53,11 @@ class StdoutHandler(qtc.QObject):
 
         self._stream = sys.stdout
         sys.stdout = self
+        self._content = ""
 
     def write(self, text: str):
         self._stream.write(text)
+        self._content += text
         self.output_signal.emit(text)
 
     def __getattr__(self, name: str):

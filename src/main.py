@@ -123,6 +123,7 @@ class MainApp(qtw.QApplication):
         self.layout.addWidget(self.patch_button)
 
         self.std_handler.output_signal.connect(self.handle_stdout)
+        self.std_handler.output_signal.emit(self.std_handler._content)
         self.done_signal.connect(self.done)
 
         self.log.debug("Program started!")
@@ -191,7 +192,8 @@ class MainApp(qtw.QApplication):
         self.log.warning("Patch incomplete!")
 
     def scan_for_racemenu(self):
-        parent_folder = Path(".").parent
+        parent_folder = Path(".").resolve().parent.parent
+        print(f"{parent_folder = }")
 
         for folder in parent_folder.glob("**\\RaceMenu.bsa"):
             return str(folder.resolve().parent)
@@ -199,7 +201,8 @@ class MainApp(qtw.QApplication):
         return ""
 
     def scan_for_patch(self):
-        parent_folder = Path(".").parent
+        parent_folder = Path(".").resolve().parent.parent
+        print(f"{parent_folder = }")
 
         for folder in parent_folder.glob("**\\patch.json"):
             return str(folder.resolve().parent)

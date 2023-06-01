@@ -118,12 +118,12 @@ class Patcher:
 
         # Patch texts
         for c, text in enumerate(patch_data.get("text", [])):
-            char_ids = text["indexes"]
+            char_ids = text["index"]
             self.log.info(f"Patching text {c+1} of {len(patch_data['text'])}...")
-            font_id = text["font"]
-            outlines = text["useOutlines"]
-            hex_color = text["color"]
-            rgb_color = utils.hex_to_rgb(hex_color)
+            font_id = text.get("font", None)
+            outlines = text.get("useOutlines", None)
+            hex_color = text.get("color", None)
+            rgb_color = utils.hex_to_rgb(hex_color) if hex_color is not None else None
 
             for char_id in char_ids:
                 text_item = xml_tags.find(f"./item[@characterID='{char_id}']")
@@ -132,44 +132,30 @@ class Patcher:
                         f"Failed to patch text with character id '{char_id}': Text not found in XML!"
                     )
                     continue
-                text_item.attrib["fontId"] = str(font_id)
-                text_item.attrib["useOutlines"] = str(outlines).lower()
+                
+                # Patch font id
+                if font_id is not None:
+                    text_item.attrib["fontId"] = str(font_id)
+                
+                # Patch outlines
+                if outlines is not None:
+                    text_item.attrib["useOutlines"] = str(outlines).lower()
+                
+                # Patch color
+                if hex_color is not None:
+                    # Patch initial text
+                    init_text = text_item.attrib["initialText"]
+                    init_text_dec = html.unescape(init_text)
+                    init_text_dec = re.sub('color="(.*?)"', f'color="{hex_color}"', init_text_dec)
+                    init_text_enc = html.escape(init_text_dec)
+                    text_item.attrib["initialText"] = init_text_enc
 
-                # Patch initial text
-                init_text = text_item.attrib["initialText"]
-                init_text_dec = html.unescape(init_text)
-                init_text_dec = re.sub('color="(.*?)"', f'color="{hex_color}"', init_text_dec)
-                init_text_enc = html.escape(init_text_dec)
-                text_item.attrib["initialText"] = init_text_enc
-
-                # Patch textColor tag
-                text_color = text_item.find("./textColor[@type='RGBA']")
-                text_color.attrib["red"] = str(rgb_color[0])
-                text_color.attrib["green"] = str(rgb_color[1])
-                text_color.attrib["blue"] = str(rgb_color[2])
-                text_color.attrib["alpha"] = str(rgb_color[3])
-
-        # Patch shape bounds
-        for c, shape in enumerate(patch_data.get("shapes", [])):
-            if not shape.get("shapeBounds"):
-                continue
-            self.log.info(f"Patching shape bounds of shape {c}...")
-            for index in shape["index"]:
-                id = index
-                shape_item = xml_tags.find(f"./item[@shapeId='{id}']")
-                if shape_item is None:
-                    self.log.warning(
-                        f"Failed to patch shape with id '{id}': Shape not found in XML!"
-                    )
-                    continue
-                bonds_item = shape_item.find(f"./shapeBounds")
-                if bonds_item is None:
-                    self.log.warning(
-                        f"Failed to patch shape with id '{id}': Shape has no shape bounds!"
-                    )
-                    continue
-                for key, value in shape["shapeBounds"].items():
-                    bonds_item.attrib[key] = str(value).lower()
+                    # Patch textColor tag
+                    text_color = text_item.find("./textColor[@type='RGBA']")
+                    text_color.attrib["red"] = str(rgb_color[0])
+                    text_color.attrib["green"] = str(rgb_color[1])
+                    text_color.attrib["blue"] = str(rgb_color[2])
+                    text_color.attrib["alpha"] = str(rgb_color[3])
 
         self.log.info("Writing XML file...")
         with open(xml_file, "wb") as file:

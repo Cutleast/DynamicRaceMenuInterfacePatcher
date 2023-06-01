@@ -69,6 +69,25 @@ class StdoutHandler(qtc.QObject):
 
 
 def hex_to_rgb(value: str):
+    """
+    Converts hexadecimal color values
+    to a tuple containing the values in rgb.    
+    """
+
     value = value.lstrip('#')
     lv = len(value)
     return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
+
+
+def lower_dict(nested_dict: dict):
+    new_dict = {}
+
+    for key, value in nested_dict.items():
+        if isinstance(value, dict):
+            new_dict[key] = lower_dict(value)
+        elif isinstance(value, str):
+            new_dict[key] = value.lower()
+        else:
+            new_dict[key] = value
+
+    return new_dict

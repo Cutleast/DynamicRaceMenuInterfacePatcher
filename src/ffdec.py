@@ -60,6 +60,10 @@ class FFDec:
         if not shape.is_file():
             self.log.error("Failed to patch shape: File does not exist!")
             return
+        
+        if shape.suffix != ".svg":
+            self.log.warning(f"File type '{shape.suffix}' is not supported or tested and may lead to issues!")
+
         args = f"""-replace "{self._swf_path}" "{self._swf_path}" {index} "{shape}" nofill"""
         self._exec_command(args)
 

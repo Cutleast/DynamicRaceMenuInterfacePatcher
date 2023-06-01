@@ -12,6 +12,18 @@ class InvalidPatchError(Exception):
     """
 
 
+class InvalidSWFFileError(InvalidPatchError):
+    """
+    For invalid SWF files specified in patch.json.
+    """
+
+
+class UnknownSectionError(InvalidPatchError):
+    """
+    For unknown patch sections in patch.json.
+    """
+
+
 class BSANotFoundError(Exception):
     """
     For missing RaceMenu BSA.

@@ -12,7 +12,7 @@ A patch consists of two parts; a "patch.json" with the specifications and instru
 
 ### Things that can be patched automatically using the patcher
 
-- Shapes (and their bounds)
+- Shapes (svg files recommended; use png files at your own risk!)
 - Sprite Matrixes
 - Texts (font and color)
 
@@ -21,6 +21,7 @@ A patch consists of two parts; a "patch.json" with the specifications and instru
 A patch.json contains a list of all SWF files that are modified by the patch and their respective modifications. An example patch.json can be found below.
 
 `patch.json`:
+
 ```json
 {
     "racesex_menu.swf": { // File name of the file that gets modified
@@ -69,10 +70,12 @@ A patch.json contains a list of all SWF files that are modified by the patch and
 A patch folder consists of the patch.json in the root folder and the shapes in a "shapes" folder.
 
 `Example patch`:
+
 ```
-Example patch (root folder)
+data (in Skyrim's installation directory)
+└── Example patch (root folder)
     ├── patch.json
     └── shapes
-        ├── shape_1.png
+        ├── shape_1.svg
         └── shape_2.svg
 ```

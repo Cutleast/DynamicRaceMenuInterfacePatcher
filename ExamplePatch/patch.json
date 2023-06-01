@@ -20,7 +20,7 @@
 
         "text": [
             {
-                "indexes": [3, 5, 7],
+                "index": [3, 5, 7],
                 "font": "54",
                 "useOutlines": "true",
                 // Use the first 6 digits to define the color
@@ -30,7 +30,7 @@
                 "color": "12345678"
             },
             {
-                "indexes": [4, 8, 9],
+                "index": [4, 8, 9],
                 "font": "45",
                 "useOutlines": "false",
                 "color": "000000ff"

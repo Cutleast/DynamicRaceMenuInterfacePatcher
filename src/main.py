@@ -150,6 +150,7 @@ here</a>.\
         self.log.debug("Program started!")
 
         self.root.show()
+        utils.apply_dark_title_bar(self.root)
 
     def __repr__(self):
         return "MainApp"

@@ -35,7 +35,7 @@ If you encountered an issue/error or you have a suggestion, create an issue unde
 1. Install Python 3.11 (Make sure that you add it to PATH!)
 2. Clone repository
 3. Open terminal in repository folder
-4. Type in following command to install all requirements:
+4. Type in following command to install all requirements (Using a virtual environment is strongly recommended!):
    `pip install -r requirements.txt`
 
 ### 3. Execute from source
@@ -56,7 +56,7 @@ If you encountered an issue/error or you have a suggestion, create an issue unde
 2. Initializes FFDec commandline interface.
 3. Patches shapes.
 4. Converts SWF to XML.
-5. Patches XML according to patch.json (see Docs for more).
+5. Patches XML according to patch.json (see [Docs](./DOCUMENTATION.md) for more).
 6. Converts XML back to SWF.
 7. Copies SWF to current directory.
 

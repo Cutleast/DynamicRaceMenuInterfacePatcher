@@ -39,7 +39,7 @@ A patch.json contains a list of all SWF files that are modified by the patch and
         ],
         "text": [
             {
-                "indexes": [3],
+                "index": [3],
                 "font": "54", // Font ID used in FFDec
                 "useOutlines": "true", // Either "true" or "false"
                 "color": "000000ff" // Hex color without '#' but with alpha (last two digits)

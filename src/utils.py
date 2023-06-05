@@ -7,6 +7,7 @@ Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
 
 import ctypes
 import sys
+import os
 from typing import Callable
 
 import qtpy.QtCore as qtc
@@ -116,3 +117,10 @@ def apply_dark_title_bar(widget: qtw.QWidget):
         ctypes.byref(value),
         ctypes.sizeof(value)
     )
+
+def check_java():
+    """
+    Checks if java is installed and added to PATH.
+    """
+
+    return not os.system("java -version")

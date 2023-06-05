@@ -33,6 +33,7 @@ class MainApp(qtw.QApplication):
     patcher_thread: utils.Thread = None
     done_signal = qtc.Signal()
     start_time: int = None
+    enable_patch_btn = qtc.Signal()
 
     def __init__(self):
         super().__init__()
@@ -72,7 +73,6 @@ class MainApp(qtw.QApplication):
         racemenu_path_label = qtw.QLabel("Choose path to RaceMenu folder:")
         self.conf_layout.addWidget(racemenu_path_label, 0, 0)
         self.racemenu_path_entry = qtw.QLineEdit()
-        self.racemenu_path_entry.setText(self.scan_for_racemenu())
         self.conf_layout.addWidget(self.racemenu_path_entry, 0, 1)
         racemenu_path_button = qtw.QPushButton("Browse...")
 
@@ -94,7 +94,6 @@ class MainApp(qtw.QApplication):
         patch_path_label = qtw.QLabel("Choose path to RaceMenu patch folder:")
         self.conf_layout.addWidget(patch_path_label, 1, 0)
         self.patch_path_entry = qtw.QLineEdit()
-        self.patch_path_entry.setText(self.scan_for_patch())
         self.conf_layout.addWidget(self.patch_path_entry, 1, 1)
         patch_path_button = qtw.QPushButton("Browse...")
 
@@ -119,7 +118,11 @@ class MainApp(qtw.QApplication):
         self.layout.addWidget(self.protocol_widget, 1)
 
         self.patch_button = qtw.QPushButton("Patch!")
+        self.patch_button.setDisabled(True)
         self.patch_button.clicked.connect(self.run_patcher)
+        self.enable_patch_btn.connect(
+            lambda: self.patch_button.setDisabled(False)
+        )
         self.layout.addWidget(self.patch_button)
 
         docs_label = qtw.QLabel(
@@ -152,7 +155,11 @@ here</a>.\
         self.root.show()
         utils.apply_dark_title_bar(self.root)
 
-        self.check_java()
+        self.start_thread = utils.Thread(
+            self.start_func,
+            "ScanThread"
+        )
+        self.start_thread.start()
 
     def __repr__(self):
         return "MainApp"
@@ -197,7 +204,7 @@ here</a>.\
             self.root.close()
             sys.exit()
 
-        self.log.info("Java found. Ready for patching!")
+        self.log.info("Java found.")
 
     def handle_exception(self, exc_type, exc_value, exc_traceback):
         self.log.critical(
@@ -258,10 +265,29 @@ here</a>.\
         self.done()
         self.log.warning("Patch incomplete!")
 
+    def start_func(self):
+        self.check_java()
+        self.root.setFocus(qtc.Qt.FocusReason.ActiveWindowFocusReason)
+
+        self.log.info("Scanning for RaceMenu...")
+        racemenu = self.scan_for_racemenu()
+        if racemenu:
+            self.racemenu_path_entry.setText(racemenu)
+        self.log.info(f"RaceMenu found: {bool(racemenu)}")
+
+        self.log.info("Scanning for DRIP Patch...")
+        patch = self.scan_for_patch()
+        if patch:
+            self.patch_path_entry.setText(patch)
+        self.log.info(f"DRIP Patch found: {bool(patch)}")
+
+        self.enable_patch_btn.emit()
+        self.log.info("Scan finished. Ready for patching!")
+
     def scan_for_racemenu(self):
         parent_folder = Path(".").resolve().parent.parent
 
-        for folder in parent_folder.glob("**\\RaceMenu.bsa"):
+        for folder in parent_folder.glob("*\\*\\RaceMenu.bsa"):
             return str(folder.resolve().parent)
 
         return ""
@@ -269,7 +295,7 @@ here</a>.\
     def scan_for_patch(self):
         parent_folder = Path(".").resolve().parent.parent
 
-        for folder in parent_folder.glob("**\\patch.json"):
+        for folder in parent_folder.glob("*\\*\\*\\patch.json"):
             return str(folder.resolve().parent)
 
         return ""

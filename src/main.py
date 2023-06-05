@@ -34,6 +34,8 @@ class MainApp(qtw.QApplication):
     done_signal = qtc.Signal()
     start_time: int = None
     enable_patch_btn = qtc.Signal()
+    racemenu_path_signal = qtc.Signal(str)
+    patch_path_signal = qtc.Signal(str)
 
     def __init__(self):
         super().__init__()
@@ -73,6 +75,7 @@ class MainApp(qtw.QApplication):
         racemenu_path_label = qtw.QLabel("Choose path to RaceMenu folder:")
         self.conf_layout.addWidget(racemenu_path_label, 0, 0)
         self.racemenu_path_entry = qtw.QLineEdit()
+        self.racemenu_path_signal.connect(self.racemenu_path_entry.setText)
         self.conf_layout.addWidget(self.racemenu_path_entry, 0, 1)
         racemenu_path_button = qtw.QPushButton("Browse...")
 
@@ -94,6 +97,7 @@ class MainApp(qtw.QApplication):
         patch_path_label = qtw.QLabel("Choose path to RaceMenu patch folder:")
         self.conf_layout.addWidget(patch_path_label, 1, 0)
         self.patch_path_entry = qtw.QLineEdit()
+        self.patch_path_signal.connect(self.patch_path_entry.setText)
         self.conf_layout.addWidget(self.patch_path_entry, 1, 1)
         patch_path_button = qtw.QPushButton("Browse...")
 
@@ -267,25 +271,31 @@ here</a>.\
 
     def start_func(self):
         self.check_java()
-        self.root.setFocus(qtc.Qt.FocusReason.ActiveWindowFocusReason)
 
+        self.log.debug(f"Current path: {Path('.').resolve()}")
         self.log.info("Scanning for RaceMenu...")
         racemenu = self.scan_for_racemenu()
         if racemenu:
-            self.racemenu_path_entry.setText(racemenu)
+            self.racemenu_path_signal.emit(racemenu)
         self.log.info(f"RaceMenu found: {bool(racemenu)}")
 
         self.log.info("Scanning for DRIP Patch...")
         patch = self.scan_for_patch()
         if patch:
-            self.patch_path_entry.setText(patch)
+            self.patch_path_signal.emit(patch)
         self.log.info(f"DRIP Patch found: {bool(patch)}")
 
         self.enable_patch_btn.emit()
-        self.log.info("Scan finished. Ready for patching!")
+        if patch and racemenu:
+            self.log.info("Scan finished. Ready for patching!")
+        else:
+            self.log.info("Scan finished. One or more paths could not be found automatically. Manual configuration required!")
 
     def scan_for_racemenu(self):
         parent_folder = Path(".").resolve().parent.parent
+
+        for folder in parent_folder.glob("*\\RaceMenu.bsa"):
+            return str(folder.resolve().parent)
 
         for folder in parent_folder.glob("*\\*\\RaceMenu.bsa"):
             return str(folder.resolve().parent)
@@ -294,6 +304,9 @@ here</a>.\
 
     def scan_for_patch(self):
         parent_folder = Path(".").resolve().parent.parent
+
+        for folder in parent_folder.glob("*\\*\\patch.json"):
+            return str(folder.resolve().parent)
 
         for folder in parent_folder.glob("*\\*\\*\\patch.json"):
             return str(folder.resolve().parent)

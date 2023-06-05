@@ -8,6 +8,7 @@ Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
 import ctypes
 import sys
 import os
+import subprocess
 from typing import Callable
 
 import qtpy.QtCore as qtc
@@ -123,4 +124,14 @@ def check_java():
     Checks if java is installed and added to PATH.
     """
 
-    return not os.system("java -version")
+    try:
+        subprocess.check_call(
+            ["java", "-version"],
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stdin=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        return True
+    except subprocess.CalledProcessError:
+        return False

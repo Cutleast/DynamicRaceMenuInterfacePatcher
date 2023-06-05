@@ -167,6 +167,7 @@ here</a>.\
             message_box = qtw.QMessageBox(self.root)
             message_box.setWindowIcon(self.root.windowIcon())
             message_box.setStyleSheet(self.root.styleSheet())
+            utils.apply_dark_title_bar(message_box)
             message_box.setWindowTitle("No Java installed!")
             message_box.setText(
                 "Java could not be found on PATH.\nMake sure that Java is installed and try again!"

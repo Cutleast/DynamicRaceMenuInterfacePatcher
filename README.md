@@ -1,5 +1,3 @@
-# Dynamic Race Menu Interface Patcher (DRIP)
-
 <p align="center">
 <img src="repo_assets/DRIP_Headline Github.png" width="750px" />
 <br>

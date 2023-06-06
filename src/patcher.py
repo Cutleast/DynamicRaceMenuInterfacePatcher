@@ -112,7 +112,7 @@ class Patcher:
                 )
             else:
                 matrix_item = sprite_item.find(
-                    f"./subTags/item[@name='{name}']"
+                    f"./subTags/item[@name='{name}']/matrix"
                 )
             if matrix_item is None:
                 self.log.warning(

@@ -43,6 +43,7 @@ A patch.json contains a list of all SWF files that are modified by the patch and
             {
                 "SpriteID": "1",
                 "CharacterID": "20",
+		"Name": "itemname", // Optional, will use this if given otherwise the CharacterID
                 "MATRIX": { // This gets applied 1:1 to the SWF
                     "translateX": "100",
                     "translateY": "-100",

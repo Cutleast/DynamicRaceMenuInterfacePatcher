@@ -97,7 +97,8 @@ class Patcher:
         # Patch sprites
         for c, sprite in enumerate(patch_data.get("sprites", [])):
             id = sprite["SpriteID"]
-            char_id = sprite["CharacterID"]
+            char_id = sprite.get("CharacterID", None)
+            name = sprite.get("Name", None)
             self.log.info(f"Patching sprite {c+1} of {len(patch_data['sprites'])}...")
             sprite_item = xml_tags.find(f"./item[@spriteId='{id}']")
             if sprite_item is None:
@@ -105,12 +106,17 @@ class Patcher:
                     f"Failed to patch sprite with id '{id}': Sprite not found in XML!"
                 )
                 continue
-            matrix_item = sprite_item.find(
-                f"./subTags/item[@characterId='{char_id}']/matrix"
-            )
+            if name is None:
+                matrix_item = sprite_item.find(
+                    f"./subTags/item[@characterId='{char_id}']/matrix"
+                )
+            else:
+                matrix_item = sprite_item.find(
+                    f"./subTags/item[@name='{name}']"
+                )
             if matrix_item is None:
                 self.log.warning(
-                    f"Failed to patch sprite with id '{id}': Matrix not found for character id '{char_id}'!"
+                    f"Failed to patch sprite with id '{id}': Matrix not found for character id '{char_id}' or name '{name}'!"
                 )
                 continue
             for key, value in sprite["MATRIX"].items():

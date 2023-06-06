@@ -28,13 +28,7 @@ A patch.json contains a list of all SWF files that are modified by the patch and
         "shapes": [
             {
                 "index": [1], // Shape IDs to apply shape file to
-                "filePath": "shapes/shape1.svg",
-                "shapeBounds": {
-                    "Xmax": "200",
-                    "Ymax": "200",
-                    "Xmin": "0",
-                    "Ymin": "0"
-                }
+                "filePath": "shapes/shape1.svg"
             }
         ],
         "text": [

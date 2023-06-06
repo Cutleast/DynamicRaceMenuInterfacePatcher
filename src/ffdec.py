@@ -53,22 +53,6 @@ class FFDec:
 
         self._pid = None
 
-    def _replace_shape(self, shape: Path, index: int):
-        self.log.debug(f"Replacing shape '{shape.stem}' at {index}...")
-
-        shape = shape.resolve()
-        if not shape.is_file():
-            self.log.error("Failed to patch shape: File does not exist!")
-            return
-        
-        if shape.suffix != ".svg":
-            self.log.warning(f"File type '{shape.suffix}' is not supported or tested and may lead to issues!")
-
-        args = f"""-replace "{self._swf_path}" "{self._swf_path}" {index} "{shape}" nofill"""
-        self._exec_command(args)
-
-        self.log.debug("Shape replaced.")
-
     def replace_shapes(self, shapes: Dict[Path, List[int]]):
         """
         Replaces shapes in SWF by <shapes>.
@@ -79,10 +63,25 @@ class FFDec:
 
         self.log.info("Patching shapes...")
 
+        cmds: List[str] = []
         for c, (shape, indexes) in enumerate(shapes.items()):
-            self.log.info(f"Patching shape {c+1} of {len(shapes)}...")
+            shape = shape.resolve()
+            if not shape.is_file():
+                self.log.error(f"Failed to patch shape {shape.name}: File does not exist!")
+                continue
+            if shape.suffix != ".svg":
+                self.log.warning(f"File type '{shape.suffix}' ({shape.name}) is not supported or tested and may lead to issues!")
+
             for index in indexes:
-                self._replace_shape(shape, index)
+                cmd = f"""{index}\n{shape}\n"""
+                cmds.append(cmd)
+        cmdfile = self._swf_path.parent / "shapes.txt"
+        with open(cmdfile, "w", encoding="utf8") as file:
+            file.writelines(cmds)
+        
+        cmd = f"""-replace "{self._swf_path}" "{self._swf_path}" "{cmdfile.resolve()}" """
+
+        self._exec_command(cmd)
 
         self.log.info("Shapes patched.")
     

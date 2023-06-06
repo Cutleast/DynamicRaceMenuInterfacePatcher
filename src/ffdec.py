@@ -69,7 +69,7 @@ class FFDec:
             if not shape.is_file():
                 self.log.error(f"Failed to patch shape {shape.name}: File does not exist!")
                 continue
-            if shape.suffix != ".svg":
+            if shape.suffix not in  [".svg", ".png"]:
                 self.log.warning(f"File type '{shape.suffix}' ({shape.name}) is not supported or tested and may lead to issues!")
 
             for index in indexes:

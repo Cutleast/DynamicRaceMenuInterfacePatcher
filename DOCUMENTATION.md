@@ -1,3 +1,7 @@
+NOTE: You can view the status of official patches [here](https://www.nexusmods.com/skyrimspecialedition/mods/92345/?tab=forum&topic_id=12944454). It would be 
+very great, if you'd read through that **before** starting to create a patch yourself. We love to see the community take action but it doesn't help anyone,
+if two people are working on a patch at the same time and we end up with two.
+
 # Overview
 
 Patches are done in two major steps. At first they are created in FFDec itself and then they get documented in a "patch.json" file for the automated patcher.

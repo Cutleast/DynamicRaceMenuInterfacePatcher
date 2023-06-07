@@ -93,11 +93,33 @@ class Patcher:
 
         self.log.info("Patching XML file...")
 
+        # Patch shape bounds
+        for c, shape in enumerate(patch_data.get("shapes", [])):
+            if not shape.get("shapeBounds"):
+                continue
+            self.log.info(f"Patching shape bounds of shape {c}...")
+            for index in shape["index"]:
+                id = index
+                shape_item = xml_tags.find(f"./item[@shapeId='{id}']")
+                if shape_item is None:
+                    self.log.warning(
+                        f"Failed to patch shape with id '{id}': Shape not found in XML!"
+                    )
+                    continue
+                bonds_item = shape_item.find(f"./shapeBounds")
+                if bonds_item is None:
+                    self.log.warning(
+                        f"Failed to patch shape with id '{id}': Shape has no shape bounds!"
+                    )
+                    continue
+                for key, value in shape["shapeBounds"].items():
+                    bonds_item.attrib[key] = str(value).lower()
+
         # Patch sprites
         for c, sprite in enumerate(patch_data.get("sprites", [])):
             id = sprite["SpriteID"]
-            char_id = sprite["CharacterID"]
-            depth = sprite["Depth"]
+            char_id: List[str] = sprite["CharacterID"]
+            depth: List[str] = sprite["Depth"]
             self.log.info(f"Patching sprite {c+1} of {len(patch_data['sprites'])}...")
             sprite_item = xml_tags.find(f"./item[@spriteId='{id}']")
             if sprite_item is None:
@@ -105,16 +127,74 @@ class Patcher:
                     f"Failed to patch sprite with id '{id}': Sprite not found in XML!"
                 )
                 continue
-            matrix_item = sprite_item.find(
-                    f"./subTags/item[@characterId='{char_id}'][@depth='{depth}']/matrix"
-            )
-            if matrix_item is None:
-                self.log.warning(
-                    f"Failed to patch sprite with id '{id}': Matrix not found for character id '{char_id}' with depth '{depth}'!"
-                )
-                continue
-            for key, value in sprite["MATRIX"].items():
-                matrix_item.attrib[key] = str(value).lower()
+            
+            # Patch matrix
+            if sprite.get("MATRIX", None) is not None:
+                matrix_items: List[ET.Element] = []
+
+                if "*" in char_id and "*" in depth:
+                    matrix_items = sprite_item.findall(
+                        f"./subTags/item[@characterId][@depth]/matrix"
+                    )
+                elif "*" not in char_id and "*" in depth:
+                    for id in char_id:
+                        matrix_items += sprite_item.findall(
+                            f"./subTags/item[@characterId='{id}'][@depth]/matrix"
+                        )
+                elif "*" in char_id and "*" not in depth:
+                    for d in depth:
+                        matrix_items += sprite_item.findall(
+                            f"./subTags/item[@characterId][@depth='{d}']/matrix"
+                        )
+                else:
+                    for id in char_id:
+                        for d in depth:
+                            matrix_items += sprite_item.findall(
+                                f"./subTags/item[@characterId='{id}'][@depth='{d}']/matrix"
+                            )
+
+                if not matrix_items:
+                    self.log.warning(
+                        f"Failed to patch sprite with id '{id}': No matrix found for character id '{char_id}' with depth '{depth}'!"
+                    )
+                    continue
+                for matrix_item in matrix_items:
+                    for key, value in sprite["MATRIX"].items():
+                        matrix_item.attrib[key] = str(value).lower()
+            # Patch color transforms
+            if sprite.get("colorTransform", None) is not None:
+                transform_items: List[ET.Element] = []
+
+                if "*" in char_id and "*" in depth:
+                    transform_items = sprite_item.findall(
+                        f"./subTags/item[@characterId][@depth]/colorTransform"
+                    )
+                elif "*" not in char_id and "*" in depth:
+                    for id in char_id:
+                        transform_items += sprite_item.findall(
+                            f"./subTags/item[@characterId='{id}'][@depth]/colorTransform"
+                        )
+                elif "*" in char_id and "*" not in depth:
+                    for d in depth:
+                        transform_items += sprite_item.findall(
+                            f"./subTags/item[@characterId][@depth='{d}']/colorTransform"
+                        )
+                else:
+                    for id in char_id:
+                        for d in depth:
+                            transform_items += sprite_item.findall(
+                                f"./subTags/item[@characterId='{id}'][@depth='{d}']/colorTransform"
+                            )
+                
+                if not transform_items:
+                    self.log.warning(
+                        f"Failed to patch sprite with id '{id}': No color transform item found for character id '{char_id}' with depth '{depth}'!"
+                    )
+                    continue
+
+                for transform_item in transform_items:
+                    for key, value in sprite["colorTransform"].items():
+                        transform_item.attrib[key] = str(value).lower()
 
         # Patch texts
         for c, text in enumerate(patch_data.get("text", [])):
@@ -160,6 +240,10 @@ class Patcher:
         self.log.info("Writing XML file...")
         with open(xml_file, "wb") as file:
             xml_data.write(file, encoding="utf8")
+        
+        # _debug_xml = (Path(".") / "debug.xml").resolve()
+        # with open(_debug_xml, "wb") as file:
+        #     xml_data.write(_debug_xml, encoding="utf8")
 
         self.log.info("Patched XML file.")
 
@@ -181,8 +265,18 @@ class Patcher:
         # 3) Patch shapes into SWF
         self._patch_shapes(patch_data)
 
+        _xml: bool = False
+
+        for shape in patch_data["shapes"]:
+            if shape.get("shapeBounds", None):
+                _xml = True
+                break
+
+        if not _xml:
+            _xml = patch_data.get("text") or patch_data.get("sprites")
+
         # 4) Check if XML has to be done
-        if patch_data.get("text") or patch_data.get("sprites"):
+        if _xml:
             # 4) Convert SWF to XML
             xml_file = self.ffdec_interface.swf2xml()
 

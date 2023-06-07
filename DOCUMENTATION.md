@@ -1,5 +1,7 @@
 # Overview
 
+##### This documentation always refers to the latest version of the patcher!
+
 Patches are done in two major steps. At first they are created in FFDec itself and then they get documented in a "patch.json" file for the automated patcher.
 A patch consists of two parts; a "patch.json" with the specifications and instructions for the patcher and a "shapes" folder containing the shapes that will replace the RaceMenu shapes.
 
@@ -13,7 +15,9 @@ A patch consists of two parts; a "patch.json" with the specifications and instru
 ### Things that can be patched automatically using the patcher
 
 - Shapes (svg files recommended; use png files at your own risk!)
+- Shape Bounds
 - Sprite Matrixes
+- Color Transforms
 - Texts (font and color)
 
 # Patch file structure
@@ -28,12 +32,18 @@ A patch.json contains a list of all SWF files that are modified by the patch and
         "shapes": [
             {
                 "index": [1], // Shape IDs to apply shape file to
-                "filePath": "shapes/shape1.svg"
+                "filePath": "shapes/shape1.svg",
+                "shapeBounds": { // This gets applied 1:1 to the SWF
+                    "Xmax": "200",
+                    "Ymax": "200",
+                    "Xmin": "0",
+                    "Ymin": "0"
+                }
             }
         ],
         "text": [
             {
-                "index": [3],
+                "index": [3], // Can contain multiple indexes
                 "font": "54", // Font ID used in FFDec
                 "useOutlines": "true", // Either "true" or "false"
                 "color": "000000ff" // Hex color without '#' but with alpha (last two digits)
@@ -42,8 +52,8 @@ A patch.json contains a list of all SWF files that are modified by the patch and
         "sprites": [
             {
                 "SpriteID": "1",
-                "CharacterID": "20",
-		"Depth": "1",
+                "CharacterID": ["20"], // Can contain multiple ids or "*" for all characters
+                "Depth": ["1"], // Can contain multiple depths or "*" for all depths
                 "MATRIX": { // This gets applied 1:1 to the SWF
                     "translateX": "100",
                     "translateY": "-100",
@@ -53,6 +63,11 @@ A patch.json contains a list of all SWF files that are modified by the patch and
                     "rotateSkew1": "175",
                     "hasScale": "true",
                     "hasRotate": "true"
+                },
+                "colorTransform": { // This gets applied 1:1 to the SWF
+                    "hasAddTerms": "false",
+                    "hasMultTerms": "true",
+                    "redMultTerm": "256"
                 }
             }
         ]

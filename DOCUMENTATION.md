@@ -46,8 +46,8 @@ A patch.json contains a list of all SWF files that are modified by the patch and
         "sprites": [
             {
                 "SpriteID": "1",
-                "CharacterID": "20",
-		"Depth": "1",
+                "CharacterID": ["20"], // Those can be arranged in lists. e.g. ["1","2","5"]
+		"Depth": ["1"], // Those can be arranged in lists. e.g. ["1","2","5"]
                 "MATRIX": { // This gets applied 1:1 to the SWF
                     "translateX": "100",
                     "translateY": "-100",

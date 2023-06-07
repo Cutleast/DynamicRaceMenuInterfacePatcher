@@ -1,7 +1,5 @@
-# Dynamic Race Menu Interface Patcher (DRIP)
-
 <p align="center">
-[ICON PLACEHOLDER]
+<img src="repo_assets/DRIP_Headline Github.png" width="750px" />
 <br>
 <a href="https://www.nexusmods.com/skyrimspecialedition/mods/92345"><img src="repo_assets/nexus-mods.png" height="60px"/> </a>
 <a href="https://ko-fi.com/cutleast"><img src="repo_assets/ko-fi.png" height="60px"/> </a>

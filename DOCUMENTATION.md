@@ -1,13 +1,11 @@
-NOTE: You can view the status of official patches [here](https://www.nexusmods.com/skyrimspecialedition/mods/92345/?tab=forum&topic_id=12944454). It would be 
-very great, if you'd read through that **before** starting to create a patch yourself. We love to see the community take action but it doesn't help anyone,
-if two people are working on a patch at the same time and we end up with two.
-
 # Overview
 
-##### This documentation always refers to the latest version of the patcher!
+**This documentation always refers to the latest version of the patcher!**
 
 Patches are done in two major steps. At first they are created in FFDec itself and then they get documented in a "patch.json" file for the automated patcher.
 A patch consists of two parts; a "patch.json" with the specifications and instructions for the patcher and a "shapes" folder containing the shapes that will replace the RaceMenu shapes.
+
+**NOTE:** You can view the status of official patches [here](https://www.nexusmods.com/skyrimspecialedition/mods/92345/?tab=forum&topic_id=12944454). It would be very great if you'd read through that **before** starting to create a patch yourself. We love to see the community take action but it doesn't help anyone if two people are working on a patch at the same time and we end up with two.
 
 ### Requirements for creating patches
 
@@ -18,6 +16,7 @@ A patch consists of two parts; a "patch.json" with the specifications and instru
 
 ### Things that can be patched automatically using the patcher
 
+- SWF Header (for eg. screen aspect)
 - Shapes (svg files recommended; use png files at your own risk!)
 - Shape Bounds
 - Sprite Matrixes
@@ -33,6 +32,12 @@ A patch.json contains a list of all SWF files that are modified by the patch and
 ```json
 {
     "racesex_menu.swf": { // File name of the file that gets modified
+	"header": {
+            "displayRect": { // This gets applied 1:1 to the SWF
+                "Xmax": "25600", // These values are in twips
+                "Ymax": "14400"
+            }
+        },
         "shapes": [
             {
                 "index": [1], // Shape IDs to apply shape file to

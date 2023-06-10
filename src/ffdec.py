@@ -10,6 +10,7 @@ import subprocess
 from pathlib import Path
 from typing import Dict, List
 
+import errors
 from main import MainApp
 
 
@@ -36,22 +37,25 @@ class FFDec:
 
     def _exec_command(self, args: str):
         _cmd = f""""{self._bin_path}" {args}"""
-        # self.log.debug(f"""Commandline: '{_cmd}'""")
 
         with subprocess.Popen(
             _cmd,
             shell=True,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             text=True,
             encoding="utf8",
             errors="ignore"
         ) as process:
             self._pid = process.pid
             for line in process.stdout:
-                self.log.info(f"[FFDec]: {line}")
+                self.log.info(f"[FFDec]: {line.strip()}")
 
         self._pid = None
+
+        if process.returncode:
+            raise errors.FFDecError("Failed to execute FFDec command! Check output above!")
 
     def replace_shapes(self, shapes: Dict[Path, List[int]]):
         """
@@ -64,7 +68,7 @@ class FFDec:
         self.log.info("Patching shapes...")
 
         cmds: List[str] = []
-        for c, (shape, indexes) in enumerate(shapes.items()):
+        for shape, indexes in shapes.items():
             shape = shape.resolve()
             if not shape.is_file():
                 self.log.error(f"Failed to patch shape {shape.name}: File does not exist!")
@@ -78,13 +82,13 @@ class FFDec:
         cmdfile = self._swf_path.parent / "shapes.txt"
         with open(cmdfile, "w", encoding="utf8") as file:
             file.writelines(cmds)
-        
+
         cmd = f"""-replace "{self._swf_path}" "{self._swf_path}" "{cmdfile.resolve()}" """
 
         self._exec_command(cmd)
 
         self.log.info("Shapes patched.")
-    
+
     def swf2xml(self):
         """
         Converts SWF file to XML file and returns file path.

@@ -3,3 +3,4 @@ qtpy
 PySide6
 bethesda-structs
 nuitka
+psutil

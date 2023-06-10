@@ -6,8 +6,8 @@ Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
 """
 
 import ctypes
+import psutil
 import sys
-import os
 import subprocess
 from typing import Callable
 
@@ -118,6 +118,16 @@ def apply_dark_title_bar(widget: qtw.QWidget):
         ctypes.byref(value),
         ctypes.sizeof(value)
     )
+
+def kill_child_process(parent_pid: int):
+    """
+    Kills process with <parent_pid> and all its children.    
+    """
+
+    parent = psutil.Process(parent_pid)
+    for child in parent.children(recursive=True):
+        child.kill()
+    parent.kill()
 
 def check_java():
     """

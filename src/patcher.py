@@ -93,6 +93,16 @@ class Patcher:
 
         self.log.info("Patching XML file...")
 
+        # Patch header
+        if header:= patch_data.get("header", {}):
+            display_rect = header.get("displayRect", None)
+
+            if display_rect is not None:
+                display_rect_item = xml_root[0]
+
+                for key, value in display_rect.items():
+                    display_rect_item.attrib[key] = value
+
         # Patch shape bounds
         for c, shape in enumerate(patch_data.get("shapes", [])):
             if not shape.get("shapeBounds"):
@@ -241,6 +251,7 @@ class Patcher:
         with open(xml_file, "wb") as file:
             xml_data.write(file, encoding="utf8")
         
+        # Optional debug XML file
         # _debug_xml = (Path(".") / "debug.xml").resolve()
         # with open(_debug_xml, "wb") as file:
         #     xml_data.write(_debug_xml, encoding="utf8")
@@ -262,18 +273,19 @@ class Patcher:
         # 2) Initialize FFDec interface
         self.ffdec_interface = ffdec.FFDec(swf_path, self.app)
 
-        # 3) Patch shapes into SWF
-        self._patch_shapes(patch_data)
-
         _xml: bool = False
 
-        for shape in patch_data["shapes"]:
-            if shape.get("shapeBounds", None):
-                _xml = True
-                break
+        # 3) Patch shapes into SWF
+        if patch_data.get("shapes") is not None:
+            self._patch_shapes(patch_data)
+
+            for shape in patch_data["shapes"]:
+                if shape.get("shapeBounds", None):
+                    _xml = True
+                    break
 
         if not _xml:
-            _xml = patch_data.get("text") or patch_data.get("sprites")
+            _xml = patch_data.get("text") or patch_data.get("sprites") or patch_data.get("header")
 
         # 4) Check if XML has to be done
         if _xml:

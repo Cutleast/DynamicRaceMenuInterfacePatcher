@@ -28,7 +28,7 @@ class MainApp(qtw.QApplication):
 
     # Application properties
     name = "Dynamic RaceMenu Interface Patcher"
-    version = "1.1"
+    version = "1.2"
 
     patcher_thread: utils.Thread = None
     done_signal = qtc.Signal()
@@ -256,13 +256,12 @@ here</a>.\
 
         if self.patcher.ffdec_interface is not None:
             if self.patcher.ffdec_interface._pid is not None:
-                os.system(f"taskkill /F /PID {self.patcher.ffdec_interface._pid}")
+                utils.kill_child_process(self.patcher.ffdec_interface._pid)
                 self.log.info(f"Killed FFDec with pid {self.patcher.ffdec_interface._pid}.")
                 self.patcher.ffdec_interface._pid = None
 
         if self.patcher.tmpdir is not None:
             if self.patcher.tmpdir.is_dir():
-                time.sleep(3)
                 shutil.rmtree(self.patcher.tmpdir)
                 self.log.info("Cleaned up temporary folder.")
 

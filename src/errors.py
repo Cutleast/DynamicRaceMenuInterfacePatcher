@@ -28,3 +28,9 @@ class BSANotFoundError(Exception):
     """
     For missing RaceMenu BSA.
     """
+
+
+class FFDecError(Exception):
+    """
+    For failed FFDec execution.
+    """

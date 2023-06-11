@@ -3,7 +3,7 @@ rem This is a comment, it starts with "rem".
 
 rem Set following to higher value if you want more memory:
 rem You need 64 bit OS and 64 bit java to set it to higher values
-set MEMORY=1024m
+set MEMORY=2048m
 
 rem Uncomment following when you encounter StackOverFlowErrors. 
 rem If the app then terminates with OutOfMemory you can experiment with lower value.

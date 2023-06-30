@@ -20,7 +20,7 @@ A patch consists of two parts; a "patch.json" with the specifications and instru
 - Shapes (svg files recommended; use png files at your own risk!)
 - Shape Bounds
 - Sprite Matrixes
-- Color Transforms
+- Color Transforms (gets created if not existing)
 - Texts (font and color)
 
 # Patch file structure
@@ -60,7 +60,7 @@ A patch.json contains a list of all SWF files that are modified by the patch and
         ],
         "sprites": [
             {
-                "SpriteID": "1",
+                "SpriteID": "1", // Can also be "*" for all sprites
                 "CharacterID": ["20"], // Can contain multiple ids or "*" for all characters
                 "Depth": ["1"], // Can contain multiple depths or "*" for all depths
                 "MATRIX": { // This gets applied 1:1 to the SWF
